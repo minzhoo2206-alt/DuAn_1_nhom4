@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Quản lý người dùng | FOURTECH Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { navy: '#061936', brand: '#1261dc' } } } }</script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-900">
+    <div class="md:flex">
+        <aside class="w-full bg-navy p-5 text-white md:min-h-screen md:w-64"><a href="index.html"
+                class="text-2xl font-black">◢ FOURTECH</a>
+            <p class="mt-2 text-xs text-blue-200">KHU VỰC QUẢN TRỊ</p>
+            <nav class="mt-8 grid gap-2 text-sm"><a class="admin-link rounded-lg px-3 py-3  hover:bg-white/10"
+                    href="index.html">▦ Tổng quan</a><a class="admin-link rounded-lg px-3 py-3  hover:bg-white/10"
+                    href="products.html">▣ Sản phẩm</a><a class="admin-link rounded-lg px-3 py-3  hover:bg-white/10"
+                    href="categories.html">▤ Danh mục</a><a class="admin-link rounded-lg px-3 py-3  hover:bg-white/10"
+                    href="orders.html">◇ Đơn hàng</a><a class="admin-link rounded-lg px-3 py-3 active hover:bg-white/10"
+                    href="users.html">♙ Người dùng</a><a href="../index.html"
+                    class="mt-5 rounded-lg bg-white/10 px-3 py-3">← Về website</a></nav>
+        </aside>
+        <main class="min-w-0 flex-1">
+            <header class="flex items-center justify-between border-b bg-white px-6 py-4"><b>Trang quản trị</b><span
+                    class="text-sm text-slate-500">Xin chào, Admin</span></header>
+            <div class="p-6">
+                <h1 class="text-2xl font-black">QUẢN LÝ NGƯỜI DÙNG</h1>
+                <div class="mt-6 overflow-x-auto rounded-2xl border bg-white">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="p-4">Họ tên</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Vai trò</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-t">
+                                <td class="p-4">Nguyễn Văn A</td>
+                                <td>a@email.com</td>
+                                <td>09xxxxxxxx</td>
+                                <td>Khách hàng</td>
+                                <td><button data-demo-action>Xem</button></td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="p-4">Trần Thị B</td>
+                                <td>b@email.com</td>
+                                <td>09xxxxxxxx</td>
+                                <td>Khách hàng</td>
+                                <td><button data-demo-action>Xem</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../assets/js/admin.js"></script>
+</body>
+
+</html>

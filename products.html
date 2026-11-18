@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Điện thoại | FOURTECH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { navy: '#061936', brand: '#1261dc', pale: '#e8f3ff' } } } }</script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+    <header class="bg-navy text-white">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-3"><a href="index.html"
+                class="flex items-center gap-2 text-2xl font-black tracking-tight"><span class="text-blue-400">◢</span>
+                FOURTECH</a>
+            <form action="products.html"
+                class="order-3 flex w-full overflow-hidden rounded-xl bg-white md:order-none md:ml-8 md:max-w-xl md:flex-1">
+                <input name="q" class="w-full px-4 py-3 text-slate-800 outline-none"
+                    placeholder="Bạn đang tìm điện thoại nào?"><button class="px-4 text-slate-700">⌕</button></form>
+            <nav class="ml-auto flex items-center gap-4 text-sm font-semibold"><a href="account.html">♙ Tài khoản</a><a
+                    class="hidden sm:block" href="orders.html">◇ Đơn hàng</a><a href="cart.html">🛒 Giỏ hàng <span
+                        data-cart-count class="rounded-full bg-blue-600 px-2">0</span></a></nav>
+        </div>
+    </header>
+    <nav class="border-b bg-white shadow-sm">
+        <div class="mx-auto flex max-w-7xl gap-7 overflow-x-auto px-4 py-3 text-sm font-bold"><a
+                class="nav-link hover:text-blue-600" href="index.html">Trang chủ</a><a
+                class="nav-link hover:text-blue-600" href="products.html">Điện thoại⌄</a><a
+                class="nav-link hover:text-blue-600" href="products.html?brand=Apple">iPhone</a><a
+                class="nav-link hover:text-blue-600" href="products.html?brand=Samsung">Samsung</a><a
+                class="nav-link hover:text-blue-600" href="products.html?brand=OPPO">OPPO</a><a
+                class="nav-link hover:text-blue-600" href="products.html?brand=Xiaomi">Xiaomi</a><a
+                class="nav-link hover:text-blue-600" href="contact.html">Liên hệ</a></div>
+    </nav>
+    <main class="mx-auto max-w-7xl px-4 py-8">
+        <p class="text-sm text-slate-500">Trang chủ / Điện thoại</p>
+        <h1 class="mb-6 mt-2 text-3xl font-black text-navy">TẤT CẢ ĐIỆN THOẠI</h1>
+        <div class="grid gap-6 md:grid-cols-[230px_1fr]">
+            <aside class="h-fit rounded-2xl border bg-white p-5">
+                <h2 class="font-bold">Bộ lọc sản phẩm</h2>
+                <p class="mt-4 text-sm font-semibold">Thương hiệu</p><label class="mt-2 block text-sm"><input
+                        type="checkbox" name="brand" value="Apple" class="mr-2">Apple</label><label
+                    class="mt-2 block text-sm"><input type="checkbox" name="brand" value="Samsung"
+                        class="mr-2">Samsung</label><label class="mt-2 block text-sm"><input type="checkbox"
+                        name="brand" value="OPPO" class="mr-2">OPPO</label><label class="mt-2 block text-sm"><input
+                        type="checkbox" name="brand" value="Xiaomi" class="mr-2">Xiaomi</label><label
+                    class="mt-2 block text-sm"><input type="checkbox" name="brand" value="vivo"
+                        class="mr-2">vivo</label><label class="mt-5 block text-sm font-semibold">Khoảng
+                    giá</label><select id="price-filter" class="mt-2 w-full rounded-lg border p-2">
+                    <option value="all">Tất cả mức giá</option>
+                    <option value="under5">Dưới 5 triệu</option>
+                    <option value="5to10">5 – 10 triệu</option>
+                    <option value="over10">Trên 10 triệu</option>
+                </select>
+            </aside>
+            <section>
+                <div class="mb-4 text-sm text-slate-500">Chọn thương hiệu và mức giá để lọc sản phẩm.</div>
+                <div id="all-products" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+            </section>
+        </div>
+    </main>
+    <section
+        class="mx-auto my-8 grid max-w-7xl gap-3 rounded-2xl bg-pale px-5 py-5 text-center font-bold text-navy md:grid-cols-3">
+        <div>♧ Tư vấn tận tâm</div>
+        <div class="border-y border-blue-200 py-3 md:border-x md:border-y-0">🚚 Giao hàng toàn quốc</div>
+        <div>♢ Hỗ trợ bảo hành</div>
+    </section>
+    <footer class="bg-navy text-white">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-7"><strong
+                class="text-2xl">◢ FOURTECH</strong><span class="text-sm text-blue-100">Kết nối công nghệ, kết nối cuộc
+                sống</span>
+            <div class="flex gap-5 text-sm"><a href="contact.html">Liên hệ</a><a href="orders.html">Đơn hàng</a><a
+                    href="account.html">Tài khoản</a></div>
+        </div>
+        <p class="pb-4 text-center text-xs text-blue-200">© 2026 FOURTECH · Giá minh họa</p>
+    </footer>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>

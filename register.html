@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đăng ký | FOURTECH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { navy: '#061936', brand: '#1261dc', pale: '#e8f3ff' } } } }</script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+    <header class="bg-navy text-white">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-3"><a href="index.html"
+                class="flex items-center gap-2 text-2xl font-black tracking-tight"><span class="text-blue-400">◢</span>
+                FOURTECH</a>
+            <form action="products.html"
+                class="order-3 flex w-full overflow-hidden rounded-xl bg-white md:order-none md:ml-8 md:max-w-xl md:flex-1">
+                <input name="q" class="w-full px-4 py-3 text-slate-800 outline-none"
+                    placeholder="Bạn đang tìm điện thoại nào?"><button class="px-4 text-slate-700">⌕</button></form>
+            <nav class="ml-auto flex items-center gap-4 text-sm font-semibold"><a href="account.html">♙ Tài khoản</a><a
+                    class="hidden sm:block" href="orders.html">◇ Đơn hàng</a><a href="cart.html">🛒 Giỏ hàng <span
+                        data-cart-count class="rounded-full bg-blue-600 px-2">0</span></a></nav>
+        </div>
+    </header>
+    <nav class="border-b bg-white shadow-sm">
+        <div class="mx-auto flex max-w-7xl gap-7 overflow-x-auto px-4 py-3 text-sm font-bold"><a
+                class="nav-link hover:text-blue-600" href="index.html">Trang chủ</a><a
+                class="nav-link hover:text-blue-600" href="products.html">Điện thoại⌄</a><a
+                class="nav-link hover:text-blue-600" href="products.html?brand=Apple">iPhone</a><a
+                class="nav-link hover:text-blue-600" href="products.html?brand=Samsung">Samsung</a><a
+                class="nav-link hover:text-blue-600" href="products.html?brand=OPPO">OPPO</a><a
+                class="nav-link hover:text-blue-600" href="products.html?brand=Xiaomi">Xiaomi</a><a
+                class="nav-link hover:text-blue-600" href="contact.html">Liên hệ</a></div>
+    </nav>
+    <main class="mx-auto max-w-md px-4 py-12">
+        <form onsubmit="event.preventDefault();alert('Chức năng đăng ký cần backend.')"
+            class="rounded-2xl border bg-white p-7 shadow-sm">
+            <h1 class="mb-6 text-center text-2xl font-black text-navy">TẠO TÀI KHOẢN</h1><input required
+                class="mb-3 w-full rounded-lg border p-3" placeholder="Họ và tên"><input required
+                class="mb-3 w-full rounded-lg border p-3" placeholder="Số điện thoại"><input required
+                class="mb-3 w-full rounded-lg border p-3" placeholder="Email"><input required
+                class="mb-3 w-full rounded-lg border p-3" placeholder="Mật khẩu" type=password><button
+                class="w-full rounded-xl bg-brand py-3 font-bold text-white">Đăng ký</button>
+            <p class="mt-5 text-center text-sm">Đã có tài khoản? <a class="text-brand" href="login.html">Đăng nhập</a>
+            </p>
+        </form>
+    </main>
+    <section
+        class="mx-auto my-8 grid max-w-7xl gap-3 rounded-2xl bg-pale px-5 py-5 text-center font-bold text-navy md:grid-cols-3">
+        <div>♧ Tư vấn tận tâm</div>
+        <div class="border-y border-blue-200 py-3 md:border-x md:border-y-0">🚚 Giao hàng toàn quốc</div>
+        <div>♢ Hỗ trợ bảo hành</div>
+    </section>
+    <footer class="bg-navy text-white">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-7"><strong
+                class="text-2xl">◢ FOURTECH</strong><span class="text-sm text-blue-100">Kết nối công nghệ, kết nối cuộc
+                sống</span>
+            <div class="flex gap-5 text-sm"><a href="contact.html">Liên hệ</a><a href="orders.html">Đơn hàng</a><a
+                    href="account.html">Tài khoản</a></div>
+        </div>
+        <p class="pb-4 text-center text-xs text-blue-200">© 2026 FOURTECH · Giá minh họa</p>
+    </footer>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
