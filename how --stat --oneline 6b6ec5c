@@ -1,0 +1,40 @@
+[33m94b0a22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mTask_Minh_full[m[33m, [m[1;31morigin/giao-dien-1[m[33m, [m[1;32mtask-Minh[m[33m, [m[1;32mbackup-truoc-khi-khoi-phuc[m[33m)[m refs/heads/backup-truoc-khi-khoi-phuc@{0}: branch: Created from Task_Minh_full
+[33m94b0a22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mTask_Minh_full[m[33m, [m[1;31morigin/giao-dien-1[m[33m, [m[1;32mtask-Minh[m[33m, [m[1;32mbackup-truoc-khi-khoi-phuc[m[33m)[m refs/heads/Task_Minh_full@{0}: branch: Created from HEAD
+[33m94b0a22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mTask_Minh_full[m[33m, [m[1;31morigin/giao-dien-1[m[33m, [m[1;32mtask-Minh[m[33m, [m[1;32mbackup-truoc-khi-khoi-phuc[m[33m)[m HEAD@{0}: checkout: moving from task-Minh to Task_Minh_full
+[33m94b0a22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mTask_Minh_full[m[33m, [m[1;31morigin/giao-dien-1[m[33m, [m[1;32mtask-Minh[m[33m, [m[1;32mbackup-truoc-khi-khoi-phuc[m[33m)[m refs/remotes/origin/giao-dien-1@{0}: update by push
+[33m94b0a22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mTask_Minh_full[m[33m, [m[1;31morigin/giao-dien-1[m[33m, [m[1;32mtask-Minh[m[33m, [m[1;32mbackup-truoc-khi-khoi-phuc[m[33m)[m refs/heads/task-Minh@{0}: commit: .
+[33m94b0a22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mTask_Minh_full[m[33m, [m[1;31morigin/giao-dien-1[m[33m, [m[1;32mtask-Minh[m[33m, [m[1;32mbackup-truoc-khi-khoi-phuc[m[33m)[m HEAD@{1}: commit: .
+[33mc360c6b[m[33m ([m[1;31morigin/nhuanvqpc11405[m[33m, [m[1;32mnhuanvqpc11405[m[33m)[m HEAD@{2}: checkout: moving from task-Minh to task-Minh
+[33mc360c6b[m[33m ([m[1;31morigin/nhuanvqpc11405[m[33m, [m[1;32mnhuanvqpc11405[m[33m)[m refs/heads/task-Minh@{1}: reset: moving to c360c6be6e9eb317eb02624d439dd6cbb1add05b
+[33mc360c6b[m[33m ([m[1;31morigin/nhuanvqpc11405[m[33m, [m[1;32mnhuanvqpc11405[m[33m)[m HEAD@{3}: reset: moving to c360c6be6e9eb317eb02624d439dd6cbb1add05b
+[33m608b0c5[m HEAD@{4}: checkout: moving from nhuanvqpc11405 to task-Minh
+[33mc360c6b[m[33m ([m[1;31morigin/nhuanvqpc11405[m[33m, [m[1;32mnhuanvqpc11405[m[33m)[m HEAD@{5}: reset: moving to HEAD
+[33mc360c6b[m[33m ([m[1;31morigin/nhuanvqpc11405[m[33m, [m[1;32mnhuanvqpc11405[m[33m)[m refs/heads/nhuanvqpc11405@{0}: branch: Created from origin/nhuanvqpc11405
+[33mc360c6b[m[33m ([m[1;31morigin/nhuanvqpc11405[m[33m, [m[1;32mnhuanvqpc11405[m[33m)[m HEAD@{6}: checkout: moving from task-Minh to nhuanvqpc11405
+[33m608b0c5[m HEAD@{7}: reset: moving to HEAD
+[33m608b0c5[m refs/heads/task-Minh@{2}: commit: test(core): add core unit tests and shared helpers
+[33m608b0c5[m HEAD@{8}: commit: test(core): add core unit tests and shared helpers
+[33mb5dec3b[m refs/heads/task-Minh@{3}: commit: feat(bootstrap): initialize application and register web routes
+[33mb5dec3b[m HEAD@{9}: commit: feat(bootstrap): initialize application and register web routes
+[33m2069601[m refs/heads/task-Minh@{4}: commit: feat(security): implement authentication csrf and role middleware
+[33m2069601[m HEAD@{10}: commit: feat(security): implement authentication csrf and role middleware
+[33m850ad4a[m refs/heads/task-Minh@{5}: commit: feat(router): implement FastRoute request dispatching
+[33m850ad4a[m HEAD@{11}: commit: feat(router): implement FastRoute request dispatching
+[33m08a2377[m refs/heads/task-Minh@{6}: commit: feat(database): implement PDO connection and transaction manager
+[33m08a2377[m HEAD@{12}: commit: feat(database): implement PDO connection and transaction manager
+[33m7e2cb02[m refs/heads/task-Minh@{7}: commit: feat(core): implement request response view and http exception
+[33m7e2cb02[m HEAD@{13}: commit: feat(core): implement request response view and http exception
+[33m6eeef37[m refs/heads/task-Minh@{8}: commit: config: add application and database configuration
+[33m6eeef37[m HEAD@{14}: commit: config: add application and database configuration
+[33m46cc0fb[m refs/heads/task-Minh@{9}: Branch: renamed refs/heads/giao-dien-1 to refs/heads/task-Minh
+[33m46cc0fb[m HEAD@{15}: Branch: renamed refs/heads/giao-dien-1 to refs/heads/task-Minh
+[33m46cc0fb[m HEAD@{17}: reset: moving to 46cc0fb884e488db8757177494f4e2ed1776951f
+[33m46cc0fb[m HEAD@{18}: reset: moving to 46cc0fb884e488db8757177494f4e2ed1776951f
+[33m46cc0fb[m HEAD@{19}: reset: moving to 46cc0fb884e488db8757177494f4e2ed1776951f
+[33m46cc0fb[m HEAD@{20}: reset: moving to 46cc0fb884e488db8757177494f4e2ed1776951f
+[33m46cc0fb[m refs/heads/task-Minh@{10}: reset: moving to 46cc0fb884e488db8757177494f4e2ed1776951f
+[33m46cc0fb[m HEAD@{21}: reset: moving to 46cc0fb884e488db8757177494f4e2ed1776951f
+[33m10f5fc1[m refs/heads/task-Minh@{11}: reset: moving to 10f5fc1649891f7751a061bb43f58c057e20639b
+[33m10f5fc1[m HEAD@{22}: reset: moving to 10f5fc1649891f7751a061bb43f58c057e20639b
+[33maec0fc6[m refs/heads/task-Minh@{12}: reset: moving to aec0fc6c19b43b5675654b08ab659e31b343be7d
+[33maec0fc6[m HEAD@{23}: reset: moving to aec0fc6c19b43b5675654b08ab659e31b343be7d
