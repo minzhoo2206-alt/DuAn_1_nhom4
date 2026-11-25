@@ -93,6 +93,59 @@ document.addEventListener("DOMContentLoaded", () => {
     detail.innerHTML = `<div class="rounded-2xl bg-slate-50 p-6"><img src="${p.image}" alt="${p.name}" class="h-96 w-full object-contain"></div><div><p class="font-bold text-blue-700">${p.brand}</p><h1 class="mt-2 text-3xl font-black">${p.name}</h1><p class="mt-3 text-slate-500">${p.spec}</p><p class="my-6 text-3xl font-black text-red-700">${money(p.price)}</p><div class="rounded-xl bg-blue-50 p-4 text-sm leading-7">✓ Hàng chính hãng<br>✓ Hỗ trợ tư vấn trước và sau khi mua<br>✓ Chính sách bảo hành theo cửa hàng</div><button onclick="addToCart(${p.id})" class="mt-6 rounded-xl bg-blue-600 px-7 py-3 font-bold text-white">Thêm vào giỏ hàng</button></div>`;
   }
   if (document.querySelector("#cart-items")) renderCart();
+  const checkoutTotal = document.querySelector("#checkout-total");
+
+  if (checkoutTotal) {
+    let total = 0;
+
+    for (const item of getCart()) {
+      const product = FOURTECH_PRODUCTS.find((p) => p.id === item.id);
+
+      if (product) {
+        total += product.price * item.qty;
+        const itemLine = document.createElement("li");
+        itemLine.textContent = product.name + " × " + item.qty;
+        document.querySelector("#checkout-items").appendChild(itemLine);
+      }
+    }
+
+    checkoutTotal.textContent = money(total);
+    const checkoutForm = checkoutTotal.closest("form");
+
+checkoutForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const cart = getCart();
+  if (cart.length === 0) return;
+
+  // Đọc các đơn mẫu đã lưu trước đó
+  const orders = JSON.parse(localStorage.getItem("fourtech_orders") || "[]");
+
+  // Thêm đơn vừa đặt vào lịch sử
+  orders.push({
+    code: "DH" + Date.now(),
+    date: new Date().toLocaleDateString("vi-VN"),
+    items: cart,
+    total: total,
+    status: "Đã xác nhận (demo)"
+  });
+
+  localStorage.setItem("fourtech_orders", JSON.stringify(orders));
+
+  // Lưu đơn xong mới làm trống giỏ hàng
+  saveCart([]);
+  updateCartCount();
+}, { once: true });
+    if (getCart().length === 0) {
+      checkoutTotal.textContent =
+        "Giỏ hàng trống. Bạn hãy chọn điện thoại trước.";
+
+      const form = checkoutTotal.closest("form");
+      const orderButton = form.querySelector("button");
+      orderButton.disabled = true;
+      orderButton.classList.add("opacity-50", "cursor-not-allowed");
+    }
+  }
 });
 function renderCart() {
   const host = document.querySelector("#cart-items");
