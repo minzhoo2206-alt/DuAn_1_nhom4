@@ -4,11 +4,11 @@ $isPreview = $isPreview ?? false;
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
         <?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>
@@ -35,15 +35,28 @@ $isPreview = $isPreview ?? false;
                 ADMIN PANEL
             </p>
 
+
             <nav class="space-y-2">
 
-                <a href="/admin"
-                   class="block rounded-lg bg-blue-600 p-3">
+                <a href="/admin" class="block rounded-lg p-3
+        <?= $pageTitle === 'Tổng quan'
+            ? 'bg-blue-600 text-white'
+            : 'text-slate-300 hover:bg-slate-800' ?>">
+
                     Tổng quan
+
+                </a>
+
+                <a href="/admin/products" class="block rounded-lg p-3
+        <?= $pageTitle === 'Quản lý sản phẩm'
+            ? 'bg-blue-600 text-white'
+            : 'text-slate-300 hover:bg-slate-800' ?>">
+
+                    Sản phẩm
+
                 </a>
 
                 <?php foreach ([
-                    'Sản phẩm',
                     'Danh mục',
                     'Thương hiệu',
                     'Đơn hàng',
@@ -51,10 +64,13 @@ $isPreview = $isPreview ?? false;
                     'Phân quyền'
                 ] as $menu): ?>
 
-                    <span class="block rounded-lg p-3 text-slate-400"
-                          aria-disabled="true">
+                    <span class="block rounded-lg p-3 text-slate-400" aria-disabled="true">
 
-                        <?= htmlspecialchars($menu, ENT_QUOTES, 'UTF-8') ?>
+                        <?= htmlspecialchars(
+                            $menu,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
 
                     </span>
 
@@ -92,4 +108,5 @@ $isPreview = $isPreview ?? false;
     </div>
 
 </body>
+
 </html>
