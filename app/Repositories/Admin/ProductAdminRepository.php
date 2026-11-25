@@ -12,7 +12,6 @@ final class ProductAdminRepository
     {
     }
 
-    // Lấy danh sách sản phẩm
     public function paginate(int $limit = 20, int $offset = 0): array
     {
         $sql = 'SELECT p.id, p.name, p.slug, p.status,
@@ -26,16 +25,13 @@ final class ProductAdminRepository
                 LIMIT :limit OFFSET :offset';
 
         $stmt = $this->db->prepare($sql);
-
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Tìm một sản phẩm theo ID
     public function find(int $id): ?array
     {
         $sql = 'SELECT id, name, slug, brand_id, category_id,
@@ -45,9 +41,7 @@ final class ProductAdminRepository
                 LIMIT 1';
 
         $stmt = $this->db->prepare($sql);
-
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-
         $stmt->execute();
 
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -55,16 +49,49 @@ final class ProductAdminRepository
         return $product === false ? null : $product;
     }
 
-    // Đếm tổng số sản phẩm
     public function count(): int
     {
         $sql = 'SELECT COUNT(*) FROM products
                 WHERE deleted_at IS NULL';
 
         $stmt = $this->db->prepare($sql);
-
         $stmt->execute();
 
         return (int) $stmt->fetchColumn();
     }
+
+    // Danh sách thương hiệu và danh mục đang hoạt động.
+    public function brands(): array
+    {
+        return $this->db->query(
+            'SELECT id, name FROM brands WHERE is_active = 1 AND deleted_at IS NULL ORDER BY name'
+        )->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function categories(): array
+    {
+        return $this->db->query(
+            'SELECT id, name FROM categories WHERE is_active = 1 AND deleted_at IS NULL ORDER BY name'
+        )->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function slugExists(string $slug): bool
+    {
+        $stmt = $this->db->prepare('SELECT id FROM products WHERE slug = :slug LIMIT 1');
+        $stmt->execute(['slug' => $slug]);
+        return $stmt->fetchColumn() !== false;
+    }
+
+    public function create(array $data): int
+    {
+        $sql = 'INSERT INTO products
+                (public_id, name, slug, brand_id, category_id, description,
+                 warranty_months, status, created_at, updated_at)
+                VALUES (:public_id, :name, :slug, :brand_id, :category_id,
+                        :description, :warranty_months, :status, NOW(), NOW())';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($data);
+        return (int) $this->db->lastInsertId();
+    }
+
 }
