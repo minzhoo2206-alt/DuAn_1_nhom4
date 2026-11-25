@@ -17,9 +17,34 @@ function addToCart(id) {
   alert("Đã thêm sản phẩm vào giỏ hàng!");
 }
 function productCard(p) {
-  return `<article class="product-card rounded-2xl border border-slate-200 bg-white p-4"><a href="product-detail.html?id=${p.id}"><img class="h-48 w-full object-contain" src="${p.image}" alt="${p.name}"></a><h3 class="mt-3 font-bold text-slate-900">${p.name}</h3><p class="mt-1 text-sm text-slate-500">${p.spec}</p><p class="my-3 text-xl font-black text-red-700">${money(p.price)}</p><div class="flex gap-2"><a href="product-detail.html?id=${p.id}" class="flex-1 rounded-lg border border-blue-600 px-2 py-2 text-center text-sm font-bold text-blue-700">Xem chi tiết</a><button onclick="addToCart(${p.id})" class="rounded-lg bg-blue-600 px-4 text-white" aria-label="Thêm vào giỏ">🛒</button></div></article>`;
-}
-function renderProductList(target, items) {
+  const detailPage = location.pathname.endsWith(".php")
+    ? "product-detail.php"
+    : "product-detail.html";
+
+  const detailUrl = `${detailPage}?id=${p.id}`;
+
+  return `
+    <article class="product-card rounded-2xl border border-slate-200 bg-white p-4">
+      <a href="${detailUrl}">
+        <img class="h-48 w-full object-contain" src="${p.image}" alt="${p.name}">
+      </a>
+
+      <h3 class="mt-3 font-bold text-slate-900">${p.name}</h3>
+      <p class="mt-1 text-sm text-slate-500">${p.spec}</p>
+      <p class="my-3 text-xl font-black text-red-700">${money(p.price)}</p>
+
+      <div class="flex gap-2">
+        <a href="${detailUrl}"
+           class="flex-1 rounded-lg border border-blue-600 px-2 py-2 text-center text-sm font-bold text-blue-700">
+          Xem chi tiết
+        </a>
+        <button onclick="addToCart(${p.id})"
+                class="rounded-lg bg-blue-600 px-4 text-white"
+                aria-label="Thêm vào giỏ">🛒</button>
+      </div>
+    </article>
+  `;
+}function renderProductList(target, items) {
   const el = document.querySelector(target);
   if (el) el.innerHTML = items.map(productCard).join("");
 }
@@ -29,6 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
     renderProductList("#featured-products", FOURTECH_PRODUCTS.slice(0, 4));
   if (document.querySelector("#all-products")) {
     const params = new URLSearchParams(location.search);
+    // Lấy từ khóa từ địa chỉ trang và hiển thị lại trong ô tìm kiếm
+    const keyword = (params.get("q") || "").trim();
+    document.querySelector('input[name="q"]').value = keyword;
     const initial = params.get("brand");
     const checks = [...document.querySelectorAll('[name="brand"]')];
     if (initial) checks.forEach((c) => (c.checked = c.value === initial));
@@ -37,13 +65,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const range = document.querySelector("#price-filter")?.value || "all";
       const list = FOURTECH_PRODUCTS.filter(
         (p) =>
+          // toLowerCase() giúp khách gõ a55 hay A55 đều tìm được cùng sản phẩm.
+          p.name.toLowerCase().includes(keyword.toLowerCase()) &&
           (!brands.length || brands.includes(p.brand)) &&
           (range === "all" ||
             (range === "under5" && p.price < 5e6) ||
             (range === "5to10" && p.price >= 5e6 && p.price <= 1e7) ||
             (range === "over10" && p.price > 1e7)),
       );
-      renderProductList("#all-products", list);
+      // list là danh sách điện thoại còn lại sau khi lọc theo tên, hãng và giá. list.length === 0 nghĩa là danh sách có 0 sản phẩm.
+      if (list.length === 0) {
+        document.querySelector("#all-products").textContent =
+          "Không tìm thấy điện thoại phù hợp. Bạn hãy thử từ khóa khác hoặc đổi bộ lọc.";
+      } else {
+        renderProductList("#all-products", list);
+      }
     };
     checks.forEach((c) => c.addEventListener("change", filter));
     document.querySelector("#price-filter")?.addEventListener("change", filter);
