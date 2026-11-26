@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Services\Admin\ProductAdminService;
+use App\Services\Admin\CategoryAdminService;
 
 if (PHP_SAPI !== 'cli-server' || !in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)) {
     http_response_code(403);
@@ -10,13 +11,20 @@ if (PHP_SAPI !== 'cli-server' || !in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.
 }
 $root = dirname(__DIR__);
 require_once $root . '/app/Services/Admin/ProductAdminService.php';
+require_once $root . '/app/Services/Admin/CategoryAdminService.php';
 session_name('FOURTECH_ADMIN_PREVIEW');
 session_start(['cookie_httponly' => true, 'cookie_samesite' => 'Lax', 'use_strict_mode' => true]);
 $isPreview = true;
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $brands = [ ['id'=>1,'name'=>'Apple'], ['id'=>2,'name'=>'Samsung'], ['id'=>3,'name'=>'Xiaomi'], ['id'=>4,'name'=>'OPPO'], ['id'=>5,'name'=>'Vivo'] ];
-$categories = [['id'=>1,'name'=>'Điện thoại']];
+$_SESSION['categories'] ??= [
+    ['id'=>1,'name'=>'Điện thoại','slug'=>'dien-thoai','is_active'=>1],
+    ['id'=>2,'name'=>'Điện thoại gaming','slug'=>'dien-thoai-gaming','is_active'=>1],
+    ['id'=>3,'name'=>'Điện thoại phổ thông','slug'=>'dien-thoai-pho-thong','is_active'=>1],
+];
+$_SESSION['next_category_id'] ??= 4;
+$categories = array_values(array_filter($_SESSION['categories'], static fn(array $c): bool => !empty($c['is_active']) && empty($c['deleted_at'])));
 $brandNames = array_column($brands, 'name', 'id');
 $categoryNames = array_column($categories, 'name', 'id');
 if (!isset($_SESSION['products'])) {
@@ -40,6 +48,63 @@ $adminProductToken = $_SESSION['fourtech_product_create_token'];
 if ($method === 'GET' && ($path === '/' || $path === '/admin')) {
     require $root . '/resources/views/admin/dashboard.php';
     return;
+}
+// Task 14: danh mục demo, dùng chung validation với backend MySQL.
+if (preg_match('~^/admin/categories(?:/create|/([1-9][0-9]*)/(edit|update|activate|deactivate|delete))?$~D', $path ?? '', $m)) {
+    $categoryId = isset($m[1]) && $m[1] !== '' ? (int) filter_var($m[1], FILTER_VALIDATE_INT) : 0;
+    $action = $m[2] ?? ($path === '/admin/categories/create' ? 'create' : ($method === 'POST' ? 'store' : 'index'));
+    $expectedMethod = in_array($action, ['index','create','edit'], true) ? 'GET' : 'POST';
+    if ($method !== $expectedMethod) { http_response_code(405); header('Allow: '.$expectedMethod); exit('Method not allowed'); }
+    if ($method === 'POST') {
+        $expected = $_SESSION['fourtech_category_token'] ?? '';
+        $token = $_POST['category_token'] ?? '';
+        if (!is_string($token) || $expected === '' || !hash_equals($expected, $token)) { http_response_code(403); exit('CSRF token không hợp lệ.'); }
+    }
+    $_SESSION['fourtech_category_token'] ??= bin2hex(random_bytes(32));
+    $categoryToken = $_SESSION['fourtech_category_token'];
+    if ($action === 'index') {
+        $categories = array_values(array_filter($_SESSION['categories'], static fn(array $c): bool => empty($c['deleted_at'])));
+        $success = $_SESSION['fourtech_category_success'] ?? '';
+        unset($_SESSION['fourtech_category_success']);
+        require $root . '/resources/views/admin/categories/index.php'; return;
+    }
+    $idx = false;
+    $old = [];
+    $error = '';
+    if (!in_array($action, ['create','store'], true)) {
+        $idx = array_search($categoryId, array_column($_SESSION['categories'], 'id'), true);
+        if ($idx === false || !empty($_SESSION['categories'][$idx]['deleted_at'])) { http_response_code(404); exit('Không tìm thấy danh mục.'); }
+        $old = $_SESSION['categories'][$idx];
+    }
+    if ($method === 'GET') { require $root . '/resources/views/admin/categories/form.php'; return; }
+    try {
+        if (in_array($action, ['store','update'], true)) {
+            $data = CategoryAdminService::validate($_POST);
+            foreach ($_SESSION['categories'] as $c) {
+                if ($c['id'] !== $categoryId && $c['slug'] === $data['slug']) throw new InvalidArgumentException('Slug đã tồn tại.');
+            }
+            if ($action === 'store') {
+                array_unshift($_SESSION['categories'], $data + ['id'=>$_SESSION['next_category_id']++, 'is_active'=>1]);
+            } else {
+                $_SESSION['categories'][$idx] = array_replace($old,$data);
+                foreach ($_SESSION['products'] as &$p) if ($p['category_id'] === $categoryId) $p['category_name'] = $data['name'];
+                unset($p);
+            }
+        } else {
+            $hasProducts = false;
+            foreach ($_SESSION['products'] as $p) if ($p['category_id'] === $categoryId && empty($p['deleted_at'])) { $hasProducts = true; break; }
+            CategoryAdminService::validateAction($action, $old, $hasProducts);
+            if ($action === 'delete') $_SESSION['categories'][$idx]['deleted_at'] = gmdate('Y-m-d H:i:s');
+            else $_SESSION['categories'][$idx]['is_active'] = $action === 'activate' ? 1 : 0;
+        }
+    } catch (InvalidArgumentException $e) {
+        if (!in_array($action, ['store','update'], true)) { http_response_code(409); exit(htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')); }
+        http_response_code(422); $old = $_POST; $error = $e->getMessage();
+        require $root . '/resources/views/admin/categories/form.php'; return;
+    }
+    $_SESSION['fourtech_category_success'] = 'Cập nhật danh mục thành công!';
+    unset($_SESSION['fourtech_category_token']);
+    header('Location: /admin/categories', true, 303); return;
 }
 if ($method === 'GET' && $path === '/admin/products/create') {
     $old = [];
