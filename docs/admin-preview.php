@@ -85,7 +85,7 @@ if (preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update)$~D', $path ?? '', 
         exit('Method not allowed');
     }
     $index = array_search($productId, array_column($_SESSION['products'], 'id'), true);
-    if ($index === false) {
+    if ($index === false || !empty($_SESSION['products'][$index]['deleted_at'])) {
         http_response_code(404);
         exit('Không tìm thấy sản phẩm.');
     }
@@ -122,8 +122,50 @@ if (preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update)$~D', $path ?? '', 
     require $root . '/resources/views/admin/products/edit.php';
     return;
 }
+// Ẩn và xóa mềm chỉ bằng POST; giữ lại dữ liệu đã xóa trong session.
+if (preg_match('~^/admin/products/([1-9][0-9]*)/(hide|delete)$~D', $path ?? '', $matches)) {
+    if ($method !== 'POST') {
+        http_response_code(405);
+        header('Allow: POST');
+        exit('Method not allowed');
+    }
+    $expected = $_SESSION['fourtech_product_action_token'] ?? '';
+    $token = $_POST['admin_product_action_token'] ?? '';
+    if (!is_string($token) || !is_string($expected) || $expected === '' || !hash_equals($expected, $token)) {
+        http_response_code(403);
+        exit('CSRF token khong hop le');
+    }
+    $id = (int) filter_var($matches[1], FILTER_VALIDATE_INT);
+    $index = array_search($id, array_column($_SESSION['products'], 'id'), true);
+    if ($index === false || !empty($_SESSION['products'][$index]['deleted_at'])) {
+        http_response_code(404);
+        exit('Không tìm thấy sản phẩm.');
+    }
+    $action = $matches[2];
+    try {
+        ProductAdminService::validateLifecycleAction($action, $_SESSION['products'][$index]);
+    } catch (InvalidArgumentException $e) {
+        http_response_code(409);
+        exit(htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
+    }
+    $now = gmdate('Y-m-d H:i:s');
+    if ($action === 'hide') {
+        $_SESSION['products'][$index]['status'] = 'hidden';
+        $_SESSION['success'] = 'Ẩn sản phẩm thành công!';
+    } else {
+        $_SESSION['products'][$index]['deleted_at'] = $now;
+        $_SESSION['success'] = 'Xóa mềm sản phẩm thành công!';
+    }
+    $_SESSION['products'][$index]['updated_at'] = $now;
+    unset($_SESSION['fourtech_product_action_token']);
+    header('Location: /admin/products', true, 303);
+    return;
+}
 if ($method === 'GET' && $path === '/admin/products') {
-    $allProducts = $_SESSION['products'];
+    $_SESSION['fourtech_product_action_token'] ??= bin2hex(random_bytes(32));
+    $actionToken = $_SESSION['fourtech_product_action_token'];
+    $allProducts = array_values(array_filter($_SESSION['products'],
+        static fn(array $product): bool => empty($product['deleted_at'])));
     $perPage = 3;
     $total = count($allProducts);
     $totalPages = max(1, (int) ceil($total / $perPage));

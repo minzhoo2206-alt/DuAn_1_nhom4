@@ -124,4 +124,45 @@ final class ProductAdminService
         $this->products->update($id, $data);
     }
 
+
+    // Dùng chung quy tắc nghiệp vụ cho demo và MySQL.
+    public static function validateLifecycleAction(string $action, array $product): void
+    {
+        if (!empty($product['deleted_at'])) {
+            throw new \OutOfBoundsException('Không tìm thấy sản phẩm.');
+        }
+        $status = $product['status'] ?? '';
+        if ($action === 'hide' && $status === 'active') {
+            return;
+        }
+        if ($action === 'delete' && in_array($status, ['draft', 'hidden'], true)) {
+            return;
+        }
+        throw new InvalidArgumentException('Thao tác không hợp lệ. Hãy ẩn sản phẩm đang bán trước khi xóa.');
+    }
+
+    public function hide(int $id): void
+    {
+        $product = $this->find($id);
+        if ($product === null) {
+            throw new \OutOfBoundsException('Không tìm thấy sản phẩm.');
+        }
+        self::validateLifecycleAction('hide', $product);
+        if (!$this->products->hide($id)) {
+            throw new InvalidArgumentException('Sản phẩm đã thay đổi. Vui lòng tải lại trang.');
+        }
+    }
+
+    public function softDelete(int $id): void
+    {
+        $product = $this->find($id);
+        if ($product === null) {
+            throw new \OutOfBoundsException('Không tìm thấy sản phẩm.');
+        }
+        self::validateLifecycleAction('delete', $product);
+        if (!$this->products->softDelete($id)) {
+            throw new InvalidArgumentException('Sản phẩm đã thay đổi. Vui lòng tải lại trang.');
+        }
+    }
+
 }

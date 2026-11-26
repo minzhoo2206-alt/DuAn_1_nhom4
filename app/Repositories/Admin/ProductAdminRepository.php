@@ -116,4 +116,26 @@ final class ProductAdminRepository
         }
     }
 
+
+    // Chỉ ẩn sản phẩm đang bán, không thay đổi tồn kho.
+    public function hide(int $id): bool
+    {
+        $stmt = $this->db->prepare("UPDATE products
+            SET status = 'hidden', updated_at = NOW(6)
+            WHERE id = :id AND deleted_at IS NULL AND status = 'active'");
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() === 1;
+    }
+
+    // Giữ bản ghi để không phá liên kết với dữ liệu lịch sử.
+    public function softDelete(int $id): bool
+    {
+        $stmt = $this->db->prepare("UPDATE products
+            SET deleted_at = NOW(6), updated_at = NOW(6)
+            WHERE id = :id AND deleted_at IS NULL
+            AND status IN ('draft', 'hidden')");
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() === 1;
+    }
+
 }

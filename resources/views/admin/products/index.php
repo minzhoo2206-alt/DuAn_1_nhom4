@@ -35,7 +35,23 @@ ob_start();
                         <td class="p-4"><?= $e($product['brand_name'] ?? '') ?></td>
                         <td class="p-4"><?= $e($product['category_name'] ?? '') ?></td>
                         <td class="p-4"><span class="rounded-full px-3 py-1 <?= $statusColors[$status] ?? 'bg-slate-100' ?>"><?= $statusLabels[$status] ?? 'Không xác định' ?></span></td>
-                        <td class="p-4"><a href="/admin/products/<?= (int) $product['id'] ?>/edit" class="mr-2 text-blue-600 hover:underline">Sửa</a><button disabled class="text-red-600 opacity-50">Xóa</button></td>
+                        <td class="p-4">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <a href="/admin/products/<?= (int) $product['id'] ?>/edit" class="text-blue-600 hover:underline">Sửa</a>
+                                <?php if ($status === 'active'): ?>
+                                    <form method="post" action="/admin/products/<?= (int) $product['id'] ?>/hide" onsubmit="return confirm('Ẩn sản phẩm này?');">
+                                        <input type="hidden" name="admin_product_action_token" value="<?= $e($actionToken ?? '') ?>">
+                                        <button type="submit" class="text-amber-700 hover:underline">Ẩn</button>
+                                    </form>
+                                    <button disabled title="Ẩn sản phẩm trước khi xóa" class="text-slate-400">Xóa</button>
+                                <?php elseif (in_array($status, ['draft', 'hidden'], true)): ?>
+                                    <form method="post" action="/admin/products/<?= (int) $product['id'] ?>/delete" onsubmit="return confirm('Xóa mềm sản phẩm này? Bản ghi vẫn được lưu.');">
+                                        <input type="hidden" name="admin_product_action_token" value="<?= $e($actionToken ?? '') ?>">
+                                        <button type="submit" class="text-red-600 hover:underline">Xóa</button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 <?php if (empty($products)): ?><tr><td colspan="6" class="p-10 text-center text-slate-500">Chưa có sản phẩm.</td></tr><?php endif; ?>

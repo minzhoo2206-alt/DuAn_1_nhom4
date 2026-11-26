@@ -41,6 +41,10 @@ final class ProductAdminController
         $data = $this->service->listing($page, 20);
 
         $data['pageTitle'] = 'Quản lý sản phẩm';
+        $_SESSION['fourtech_product_action_token'] ??= bin2hex(random_bytes(32));
+        $data['actionToken'] = $_SESSION['fourtech_product_action_token'];
+        $data['success'] = $_SESSION['fourtech_product_action_success'] ?? '';
+        unset($_SESSION['fourtech_product_action_success']);
 
         $response->html(
             View::render('admin/products/index', $data)
@@ -141,6 +145,50 @@ final class ProductAdminController
         $data['error'] = $error;
         $data['adminProductToken'] = $_SESSION['fourtech_product_edit_token'];
         $response->html(View::render('admin/products/edit', $data), $status);
+    }
+
+
+    // Minh đăng ký các route POST với middleware xác thực, phân quyền và CSRF.
+    public function hide(Request $request, Response $response, array $params = []): void
+    {
+        $this->lifecycleAction('hide', $request, $response, $params);
+    }
+
+    public function softDelete(Request $request, Response $response, array $params = []): void
+    {
+        $this->lifecycleAction('delete', $request, $response, $params);
+    }
+
+    private function lifecycleAction(string $action, Request $request, Response $response, array $params): void
+    {
+        $id = (int) filter_var($params['id'] ?? null, FILTER_VALIDATE_INT);
+        $token = $request->input('admin_product_action_token', '');
+        $expected = $_SESSION['fourtech_product_action_token'] ?? '';
+        if (!is_string($token) || !is_string($expected) || $expected === '' || !hash_equals($expected, $token)) {
+            $response->html('CSRF token khong hop le', 403);
+            return;
+        }
+        try {
+            if ($action === 'hide') {
+                $this->service->hide($id);
+            } else {
+                $this->service->softDelete($id);
+            }
+        } catch (\OutOfBoundsException $e) {
+            $response->html('Không tìm thấy sản phẩm.', 404);
+            return;
+        } catch (InvalidArgumentException $e) {
+            $response->html(htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'), 409);
+            return;
+        } catch (PDOException $e) {
+            error_log('Admin product action failed; SQLSTATE: ' . $e->getCode());
+            $response->html('Không thực hiện được thao tác.', 500);
+            return;
+        }
+        $_SESSION['fourtech_product_action_success'] = $action === 'hide'
+            ? 'Ẩn sản phẩm thành công!' : 'Xóa mềm sản phẩm thành công!';
+        unset($_SESSION['fourtech_product_action_token']);
+        $response->redirect('/admin/products', 303);
     }
 
 }
