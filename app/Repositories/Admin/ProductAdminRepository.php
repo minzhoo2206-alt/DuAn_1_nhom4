@@ -94,4 +94,26 @@ final class ProductAdminRepository
         return (int) $this->db->lastInsertId();
     }
 
+
+    public function slugExistsForOther(string $slug, int $id): bool
+    {
+        $stmt = $this->db->prepare('SELECT id FROM products WHERE slug = :slug AND id <> :id LIMIT 1');
+        $stmt->execute(['slug' => $slug, 'id' => $id]);
+        return $stmt->fetchColumn() !== false;
+    }
+
+    public function update(int $id, array $data): void
+    {
+        $sql = 'UPDATE products SET name = :name, slug = :slug,
+                brand_id = :brand_id, category_id = :category_id,
+                description = :description, warranty_months = :warranty_months,
+                updated_at = NOW()
+                WHERE id = :id AND deleted_at IS NULL';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($data + ['id' => $id]);
+        if ($stmt->rowCount() === 0 && $this->find($id) === null) {
+            throw new \OutOfBoundsException('Không tìm thấy sản phẩm.');
+        }
+    }
+
 }

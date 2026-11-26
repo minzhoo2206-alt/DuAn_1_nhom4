@@ -35,7 +35,7 @@ ob_start();
                         <td class="p-4"><?= $e($product['brand_name'] ?? '') ?></td>
                         <td class="p-4"><?= $e($product['category_name'] ?? '') ?></td>
                         <td class="p-4"><span class="rounded-full px-3 py-1 <?= $statusColors[$status] ?? 'bg-slate-100' ?>"><?= $statusLabels[$status] ?? 'Không xác định' ?></span></td>
-                        <td class="p-4"><button disabled class="mr-2 text-blue-600 opacity-50">Sửa</button><button disabled class="text-red-600 opacity-50">Xóa</button></td>
+                        <td class="p-4"><a href="/admin/products/<?= (int) $product['id'] ?>/edit" class="mr-2 text-blue-600 hover:underline">Sửa</a><button disabled class="text-red-600 opacity-50">Xóa</button></td>
                     </tr>
                 <?php endforeach; ?>
                 <?php if (empty($products)): ?><tr><td colspan="6" class="p-10 text-center text-slate-500">Chưa có sản phẩm.</td></tr><?php endif; ?>

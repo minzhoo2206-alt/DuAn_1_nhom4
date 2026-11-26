@@ -90,4 +90,57 @@ final class ProductAdminController
         $response->html(View::render('admin/products/create', $data), $status);
     }
 
+
+    public function edit(Request $request, Response $response, array $params = []): void
+    {
+        $id = (int) filter_var($params['id'] ?? null, FILTER_VALIDATE_INT);
+        $product = $this->service->find($id);
+        if ($product === null) {
+            $response->html('Không tìm thấy sản phẩm.', 404);
+            return;
+        }
+        $this->renderEdit($response, $id, $product);
+    }
+
+    public function update(Request $request, Response $response, array $params = []): void
+    {
+        $id = (int) filter_var($params['id'] ?? null, FILTER_VALIDATE_INT);
+        $token = $request->input('admin_product_token', '');
+        $expected = $_SESSION['fourtech_product_edit_token'] ?? '';
+        if (!is_string($token) || !is_string($expected) || $expected === '' || !hash_equals($expected, $token)) {
+            $response->html('CSRF token khong hop le', 403);
+            return;
+        }
+        $input = [];
+        foreach (['name', 'slug', 'brand_id', 'category_id', 'description', 'warranty_months'] as $key) {
+            $input[$key] = $request->input($key, '');
+        }
+        try {
+            $this->service->update($id, $input);
+        } catch (\OutOfBoundsException $e) {
+            $response->html('Không tìm thấy sản phẩm.', 404);
+            return;
+        } catch (InvalidArgumentException $e) {
+            $this->renderEdit($response, $id, $input, $e->getMessage(), 422);
+            return;
+        } catch (PDOException $e) {
+            error_log('Admin product update failed; SQLSTATE: ' . $e->getCode());
+            $this->renderEdit($response, $id, $input, 'Không lưu được sản phẩm. Vui lòng thử lại.', 500);
+            return;
+        }
+        unset($_SESSION['fourtech_product_edit_token']);
+        $response->redirect('/admin/products', 303);
+    }
+
+    private function renderEdit(Response $response, int $id, array $old, string $error = '', int $status = 200): void
+    {
+        $_SESSION['fourtech_product_edit_token'] ??= bin2hex(random_bytes(32));
+        $data = $this->service->formOptions();
+        $data['productId'] = $id;
+        $data['old'] = $old;
+        $data['error'] = $error;
+        $data['adminProductToken'] = $_SESSION['fourtech_product_edit_token'];
+        $response->html(View::render('admin/products/edit', $data), $status);
+    }
+
 }

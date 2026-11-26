@@ -76,6 +76,52 @@ if ($method === 'POST' && $path === '/admin/products') {
         return;
     }
 }
+// Chỉnh sửa sản phẩm demo theo ID, không tạo bản ghi mới.
+if (preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update)$~D', $path ?? '', $matches)) {
+    $productId = (int) filter_var($matches[1], FILTER_VALIDATE_INT);
+    $action = $matches[2];
+    if (($action === 'edit' && $method !== 'GET') || ($action === 'update' && $method !== 'POST')) {
+        http_response_code(405);
+        exit('Method not allowed');
+    }
+    $index = array_search($productId, array_column($_SESSION['products'], 'id'), true);
+    if ($index === false) {
+        http_response_code(404);
+        exit('Không tìm thấy sản phẩm.');
+    }
+    $_SESSION['fourtech_product_edit_token'] ??= bin2hex(random_bytes(32));
+    $adminProductToken = $_SESSION['fourtech_product_edit_token'];
+    $old = $_SESSION['products'][$index];
+    $error = '';
+    if ($action === 'update') {
+        $token = $_POST['admin_product_token'] ?? '';
+        if (!is_string($token) || !hash_equals($adminProductToken, $token)) {
+            http_response_code(403);
+            exit('CSRF token khong hop le');
+        }
+        try {
+            $data = ProductAdminService::validateUpdate($_POST, $brands, $categories);
+            foreach ($_SESSION['products'] as $product) {
+                if ($product['id'] !== $productId && $product['slug'] === $data['slug']) {
+                    throw new InvalidArgumentException('Slug đã tồn tại ở sản phẩm khác.');
+                }
+            }
+            $data['brand_name'] = $brandNames[$data['brand_id']];
+            $data['category_name'] = $categoryNames[$data['category_id']];
+            $_SESSION['products'][$index] = array_replace($old, $data);
+            $_SESSION['success'] = 'Cập nhật sản phẩm thành công!';
+            unset($_SESSION['fourtech_product_edit_token']);
+            header('Location: /admin/products', true, 303);
+            return;
+        } catch (InvalidArgumentException $e) {
+            http_response_code(422);
+            $old = $_POST;
+            $error = $e->getMessage();
+        }
+    }
+    require $root . '/resources/views/admin/products/edit.php';
+    return;
+}
 if ($method === 'GET' && $path === '/admin/products') {
     $allProducts = $_SESSION['products'];
     $perPage = 3;

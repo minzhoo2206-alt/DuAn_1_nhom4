@@ -46,10 +46,8 @@ final class ProductAdminService
 
     public function formOptions(): array
     {
-        return [
-            'brands' => $this->products->brands(),
-            'categories' => $this->products->categories()
-        ];
+        return ['brands' => $this->products->brands(),
+                'categories' => $this->products->categories()];
     }
 
     // Dùng chung quy tắc validation cho demo và backend MySQL.
@@ -84,13 +82,9 @@ final class ProductAdminService
         }
 
         return [
-            'name' => $name,
-            'slug' => $slug,
-            'brand_id' => $brandId,
-            'category_id' => $categoryId,
-            'description' => $description,
-            'warranty_months' => $warranty,
-            'status' => 'draft',
+            'name' => $name, 'slug' => $slug, 'brand_id' => $brandId,
+            'category_id' => $categoryId, 'description' => $description,
+            'warranty_months' => $warranty, 'status' => 'draft',
         ];
     }
 
@@ -106,6 +100,28 @@ final class ProductAdminService
         $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
         $data['public_id'] = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bytes), 4));
         return $this->products->create($data);
+    }
+
+
+    public static function validateUpdate(array $input, array $brands, array $categories): array
+    {
+        $data = self::validateCreate($input, $brands, $categories);
+        // Không chuyển sản phẩm đang bán về bản nháp khi sửa.
+        unset($data['status']);
+        return $data;
+    }
+
+    public function update(int $id, array $input): void
+    {
+        if ($this->find($id) === null) {
+            throw new \OutOfBoundsException('Không tìm thấy sản phẩm.');
+        }
+        $options = $this->formOptions();
+        $data = self::validateUpdate($input, $options['brands'], $options['categories']);
+        if ($this->products->slugExistsForOther($data['slug'], $id)) {
+            throw new InvalidArgumentException('Slug đã tồn tại ở sản phẩm khác.');
+        }
+        $this->products->update($id, $data);
     }
 
 }
