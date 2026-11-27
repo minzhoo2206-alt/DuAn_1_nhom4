@@ -14,7 +14,7 @@
     </header>
     <nav class="border-b bg-white shadow-sm">
         <div class="mx-auto flex max-w-7xl gap-7 overflow-x-auto px-4 py-3 text-sm font-bold"><a
-                class="nav-link hover:text-blue-600" href="index.php">Trang chủ</a><a
+                class="nav-link hover:text-blue-600" href="/">Trang chủ</a><a
                 class="nav-link hover:text-blue-600" href="products.php">Điện thoại⌄</a><a
                 class="nav-link hover:text-blue-600" href="products.php?brand=Apple">iPhone</a><a
                 class="nav-link hover:text-blue-600" href="products.php?brand=Samsung">Samsung</a><a
