@@ -9,12 +9,12 @@ use OutOfBoundsException;
 use Throwable;
 final class OrderAdminRepository
 {
-    private const SCOPE="checkout_key LIKE 'task18-demo-%' AND deleted_at IS NULL";
+    private const SCOPE="(checkout_key LIKE 'task18-demo-%' OR checkout_key LIKE 'task19-demo-%') AND deleted_at IS NULL";
     public function __construct(private PDO $db){if($db->query('SELECT DATABASE()')->fetchColumn()!=='fourtech_admin_test')throw new DomainException('Local only');}
     private function q(string $sql,array $args=[]): \PDOStatement {$s=$this->db->prepare($sql);$s->execute($args);return $s;}
     public function listing(string $search,string $status,int $page): array
     {
-        $where="o.checkout_key LIKE 'task18-demo-%' AND o.deleted_at IS NULL";$args=[];
+        $where="(o.checkout_key LIKE 'task18-demo-%' OR o.checkout_key LIKE 'task19-demo-%') AND o.deleted_at IS NULL";$args=[];
         if($search!==''){$where.=' AND (o.checkout_key LIKE ? OR u.email LIKE ?)';$args[]='%'.$search.'%';$args[]='%'.$search.'%';}
         if(isset(Rules::LABELS[$status])){$where.=' AND o.status=?';$args[]=$status;}
         $base=' FROM orders o LEFT JOIN users u ON u.id=o.user_id WHERE '.$where;
@@ -24,7 +24,7 @@ final class OrderAdminRepository
     }
     public function detail(int $id): array
     {
-        $order=$this->q("SELECT o.id,o.checkout_key,o.status,o.items_total,o.tax_total,o.shipping_fee,o.cod_total,o.currency,o.created_at,u.email FROM orders o LEFT JOIN users u ON u.id=o.user_id WHERE o.id=? AND o.checkout_key LIKE 'task18-demo-%' AND o.deleted_at IS NULL",[$id])->fetch(PDO::FETCH_ASSOC);
+        $order=$this->q("SELECT o.id,o.checkout_key,o.status,o.items_total,o.tax_total,o.shipping_fee,o.cod_total,o.currency,o.created_at,u.email FROM orders o LEFT JOIN users u ON u.id=o.user_id WHERE o.id=? AND (o.checkout_key LIKE 'task18-demo-%' OR o.checkout_key LIKE 'task19-demo-%') AND o.deleted_at IS NULL",[$id])->fetch(PDO::FETCH_ASSOC);
         if(!$order)throw new OutOfBoundsException('Không tìm thấy đơn mẫu.');
         $items=$this->q('SELECT product_name,sku,quantity,unit_price,line_tax,line_total FROM order_items WHERE order_id=? AND deleted_at IS NULL ORDER BY id',[$id])->fetchAll(PDO::FETCH_ASSOC);
         $history=$this->q('SELECT from_status,to_status,reason,created_at,created_by FROM order_status_history WHERE order_id=? AND deleted_at IS NULL ORDER BY id DESC',[$id])->fetchAll(PDO::FETCH_ASSOC);
