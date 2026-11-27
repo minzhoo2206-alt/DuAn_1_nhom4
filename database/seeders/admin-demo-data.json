@@ -1,0 +1,846 @@
+{
+  "brands": {
+    "apple": "Apple",
+    "samsung": "Samsung",
+    "oppo": "OPPO",
+    "xiaomi": "Xiaomi",
+    "poco": "POCO",
+    "vivo": "vivo",
+    "realme": "realme",
+    "oneplus": "OnePlus",
+    "google": "Google",
+    "honor": "HONOR"
+  },
+  "categories": {
+    "dien-thoai": "Điện thoại",
+    "dien-thoai-gaming": "Điện thoại gaming",
+    "iphone": "iPhone",
+    "galaxy-s": "Samsung Galaxy S",
+    "galaxy-a": "Samsung Galaxy A",
+    "galaxy-z": "Samsung Galaxy Z",
+    "oppo-find": "OPPO Find",
+    "oppo-reno": "OPPO Reno",
+    "oppo-a": "OPPO A",
+    "xiaomi-flagship": "Xiaomi cao cấp",
+    "redmi-note": "Redmi Note",
+    "redmi": "Redmi",
+    "poco": "POCO",
+    "vivo-v": "vivo V",
+    "vivo-y": "vivo Y",
+    "realme-number": "realme Number",
+    "realme-c": "realme C",
+    "oneplus": "OnePlus",
+    "google-pixel": "Google Pixel",
+    "honor": "HONOR"
+  },
+  "products": [
+    {
+      "slug": "task19-phone-001",
+      "name": "iPhone 11 (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-002",
+      "name": "iPhone 12 (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-003",
+      "name": "iPhone 13 (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-004",
+      "name": "iPhone 14 (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-005",
+      "name": "iPhone 15 (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-006",
+      "name": "iPhone 15 Pro (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-007",
+      "name": "iPhone 15 Pro Max (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-008",
+      "name": "iPhone 16 (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-009",
+      "name": "iPhone 16 Pro (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-010",
+      "name": "iPhone 16 Pro Max (Demo)",
+      "brand": "apple",
+      "category": "iphone",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-011",
+      "name": "Galaxy S23 (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-s",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-012",
+      "name": "Galaxy S23 Ultra (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-s",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-013",
+      "name": "Galaxy S24 (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-s",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-014",
+      "name": "Galaxy S24 Ultra (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-s",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-015",
+      "name": "Galaxy A15 (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-a",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-016",
+      "name": "Galaxy A25 (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-a",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-017",
+      "name": "Galaxy A35 (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-a",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-018",
+      "name": "Galaxy A55 (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-a",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-019",
+      "name": "Galaxy Z Flip6 (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-z",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-020",
+      "name": "Galaxy Z Fold6 (Demo)",
+      "brand": "samsung",
+      "category": "galaxy-z",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-021",
+      "name": "OPPO Find X5 (Demo)",
+      "brand": "oppo",
+      "category": "oppo-find",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-022",
+      "name": "OPPO Find X5 Pro (Demo)",
+      "brand": "oppo",
+      "category": "oppo-find",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-023",
+      "name": "OPPO Reno10 (Demo)",
+      "brand": "oppo",
+      "category": "oppo-reno",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-024",
+      "name": "OPPO Reno11 (Demo)",
+      "brand": "oppo",
+      "category": "oppo-reno",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-025",
+      "name": "OPPO Reno12 (Demo)",
+      "brand": "oppo",
+      "category": "oppo-reno",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-026",
+      "name": "OPPO Reno12 Pro (Demo)",
+      "brand": "oppo",
+      "category": "oppo-reno",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-027",
+      "name": "OPPO A38 (Demo)",
+      "brand": "oppo",
+      "category": "oppo-a",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-028",
+      "name": "OPPO A58 (Demo)",
+      "brand": "oppo",
+      "category": "oppo-a",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-029",
+      "name": "OPPO A78 (Demo)",
+      "brand": "oppo",
+      "category": "oppo-a",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-030",
+      "name": "OPPO A98 (Demo)",
+      "brand": "oppo",
+      "category": "oppo-a",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-031",
+      "name": "Xiaomi 12 (Demo)",
+      "brand": "xiaomi",
+      "category": "xiaomi-flagship",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-032",
+      "name": "Xiaomi 13 (Demo)",
+      "brand": "xiaomi",
+      "category": "xiaomi-flagship",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-033",
+      "name": "Xiaomi 14 (Demo)",
+      "brand": "xiaomi",
+      "category": "xiaomi-flagship",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-034",
+      "name": "Xiaomi 14T (Demo)",
+      "brand": "xiaomi",
+      "category": "xiaomi-flagship",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-035",
+      "name": "Redmi Note 12 (Demo)",
+      "brand": "xiaomi",
+      "category": "redmi-note",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-036",
+      "name": "Redmi Note 13 (Demo)",
+      "brand": "xiaomi",
+      "category": "redmi-note",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-037",
+      "name": "Redmi Note 13 Pro (Demo)",
+      "brand": "xiaomi",
+      "category": "redmi-note",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-038",
+      "name": "Redmi 12 (Demo)",
+      "brand": "xiaomi",
+      "category": "redmi",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-039",
+      "name": "Redmi 13 (Demo)",
+      "brand": "xiaomi",
+      "category": "redmi",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-040",
+      "name": "Redmi 14C (Demo)",
+      "brand": "xiaomi",
+      "category": "redmi",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-041",
+      "name": "POCO M5 (Demo)",
+      "brand": "poco",
+      "category": "poco",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-042",
+      "name": "POCO M6 (Demo)",
+      "brand": "poco",
+      "category": "poco",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-043",
+      "name": "POCO M6 Pro (Demo)",
+      "brand": "poco",
+      "category": "poco",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-044",
+      "name": "POCO X5 (Demo)",
+      "brand": "poco",
+      "category": "poco",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-045",
+      "name": "POCO X5 Pro (Demo)",
+      "brand": "poco",
+      "category": "poco",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-046",
+      "name": "POCO X6 (Demo)",
+      "brand": "poco",
+      "category": "poco",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-047",
+      "name": "POCO X6 Pro (Demo)",
+      "brand": "poco",
+      "category": "poco",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-048",
+      "name": "POCO F4 (Demo)",
+      "brand": "poco",
+      "category": "dien-thoai-gaming",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-049",
+      "name": "POCO F5 (Demo)",
+      "brand": "poco",
+      "category": "dien-thoai-gaming",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-050",
+      "name": "POCO F6 (Demo)",
+      "brand": "poco",
+      "category": "dien-thoai-gaming",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-051",
+      "name": "vivo V25 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-v",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-052",
+      "name": "vivo V27 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-v",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-053",
+      "name": "vivo V29 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-v",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-054",
+      "name": "vivo V30 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-v",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-055",
+      "name": "vivo V40 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-v",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-056",
+      "name": "vivo Y16 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-y",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-057",
+      "name": "vivo Y17s (Demo)",
+      "brand": "vivo",
+      "category": "vivo-y",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-058",
+      "name": "vivo Y22 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-y",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-059",
+      "name": "vivo Y27 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-y",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-060",
+      "name": "vivo Y36 (Demo)",
+      "brand": "vivo",
+      "category": "vivo-y",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-061",
+      "name": "realme 10 (Demo)",
+      "brand": "realme",
+      "category": "realme-number",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-062",
+      "name": "realme 11 (Demo)",
+      "brand": "realme",
+      "category": "realme-number",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-063",
+      "name": "realme 11 Pro (Demo)",
+      "brand": "realme",
+      "category": "realme-number",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-064",
+      "name": "realme 12 (Demo)",
+      "brand": "realme",
+      "category": "realme-number",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-065",
+      "name": "realme 12 Pro (Demo)",
+      "brand": "realme",
+      "category": "realme-number",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-066",
+      "name": "realme C33 (Demo)",
+      "brand": "realme",
+      "category": "realme-c",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-067",
+      "name": "realme C51 (Demo)",
+      "brand": "realme",
+      "category": "realme-c",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-068",
+      "name": "realme C53 (Demo)",
+      "brand": "realme",
+      "category": "realme-c",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-069",
+      "name": "realme C55 (Demo)",
+      "brand": "realme",
+      "category": "realme-c",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-070",
+      "name": "realme C67 (Demo)",
+      "brand": "realme",
+      "category": "realme-c",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-071",
+      "name": "OnePlus 9 (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-072",
+      "name": "OnePlus 10 Pro (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-073",
+      "name": "OnePlus 11 (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-074",
+      "name": "OnePlus 12 (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-075",
+      "name": "OnePlus 12R (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-076",
+      "name": "OnePlus Nord 2 (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-077",
+      "name": "OnePlus Nord 3 (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-078",
+      "name": "OnePlus Nord 4 (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-079",
+      "name": "OnePlus Nord CE 3 (Demo)",
+      "brand": "oneplus",
+      "category": "oneplus",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-080",
+      "name": "OnePlus Nord CE 4 (Demo)",
+      "brand": "oneplus",
+      "category": "dien-thoai",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-081",
+      "name": "Google Pixel 6 (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-082",
+      "name": "Google Pixel 6a (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-083",
+      "name": "Google Pixel 6 Pro (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-084",
+      "name": "Google Pixel 7 (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-085",
+      "name": "Google Pixel 7a (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-086",
+      "name": "Google Pixel 7 Pro (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-087",
+      "name": "Google Pixel 8 (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-088",
+      "name": "Google Pixel 8a (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-089",
+      "name": "Google Pixel 8 Pro (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-090",
+      "name": "Google Pixel 9 (Demo)",
+      "brand": "google",
+      "category": "google-pixel",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-091",
+      "name": "HONOR 70 (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-092",
+      "name": "HONOR 90 (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-093",
+      "name": "HONOR 90 Lite (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-094",
+      "name": "HONOR 100 (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-095",
+      "name": "HONOR 200 (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "hidden"
+    },
+    {
+      "slug": "task19-phone-096",
+      "name": "HONOR 200 Lite (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-097",
+      "name": "HONOR X7 (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-098",
+      "name": "HONOR X8 (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "active"
+    },
+    {
+      "slug": "task19-phone-099",
+      "name": "HONOR X9a (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "draft"
+    },
+    {
+      "slug": "task19-phone-100",
+      "name": "HONOR Magic6 Pro (Demo)",
+      "brand": "honor",
+      "category": "honor",
+      "status": "hidden"
+    }
+  ],
+  "customers": [
+    "task19-customer-01@example.test",
+    "task19-customer-02@example.test",
+    "task19-customer-03@example.test"
+  ],
+  "orders": [
+    {
+      "key": "task19-demo-001",
+      "customer": 0,
+      "product": 0,
+      "price": 4500000,
+      "quantity": 2,
+      "path": [
+        "pending_confirmation"
+      ]
+    },
+    {
+      "key": "task19-demo-002",
+      "customer": 1,
+      "product": 11,
+      "price": 5000000,
+      "quantity": 1,
+      "path": [
+        "pending_confirmation",
+        "confirmed"
+      ]
+    },
+    {
+      "key": "task19-demo-003",
+      "customer": 2,
+      "product": 22,
+      "price": 5500000,
+      "quantity": 2,
+      "path": [
+        "pending_confirmation",
+        "confirmed",
+        "packing"
+      ]
+    },
+    {
+      "key": "task19-demo-004",
+      "customer": 0,
+      "product": 33,
+      "price": 6000000,
+      "quantity": 1,
+      "path": [
+        "pending_confirmation",
+        "confirmed",
+        "packing",
+        "shipped"
+      ]
+    },
+    {
+      "key": "task19-demo-005",
+      "customer": 1,
+      "product": 44,
+      "price": 6500000,
+      "quantity": 2,
+      "path": [
+        "pending_confirmation",
+        "confirmed",
+        "packing",
+        "shipped",
+        "delivered"
+      ]
+    },
+    {
+      "key": "task19-demo-006",
+      "customer": 2,
+      "product": 55,
+      "price": 7000000,
+      "quantity": 1,
+      "path": [
+        "pending_confirmation",
+        "cancelled"
+      ]
+    },
+    {
+      "key": "task19-demo-007",
+      "customer": 0,
+      "product": 66,
+      "price": 7500000,
+      "quantity": 2,
+      "path": [
+        "pending_confirmation",
+        "confirmed",
+        "packing",
+        "shipped",
+        "delivery_failed"
+      ]
+    },
+    {
+      "key": "task19-demo-008",
+      "customer": 1,
+      "product": 77,
+      "price": 8000000,
+      "quantity": 1,
+      "path": [
+        "pending_confirmation",
+        "confirmed",
+        "packing",
+        "shipped",
+        "delivery_failed",
+        "returning",
+        "returned"
+      ]
+    }
+  ]
+}
