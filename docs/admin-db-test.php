@@ -25,6 +25,8 @@ if ($method === 'GET' && in_array($path, ['/', '/admin'], true)) {
     header('Location: /admin/products', true, 302);
     return;
 }
+// Task 17: local login and server-side RBAC.
+$rbacRoute = false;
 // Task 12/13 routes: GET edit; POST update, hide, delete.
 $userOperation = null;
 $userId = 0;
@@ -36,7 +38,10 @@ $categoryId = 0;
 $categoryOperation = null;
 $productId = null;
 $operation = null;
-if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update|hide|delete)$~D', $path, $match)) {
+if (in_array($path, ['/admin/login','/admin/logout','/admin/rbac','/admin/rbac/role','/admin/rbac/staff-write'], true)) {
+    $rbacRoute = true;
+    $allowed = match ($path) { '/admin/login' => ['GET','POST'], '/admin/rbac' => ['GET'], default => ['POST'] };
+} elseif (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update|hide|delete)$~D', $path, $match)) {
     $productId = filter_var($match[1], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
     $operation = $match[2];
     if ($productId === false) {
@@ -94,7 +99,7 @@ if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update
     $allowed = ['GET'];
 } else {
     http_response_code(404);
-    exit('Route not available in Task 16');
+    exit('Route not available in Task 17');
 }
 if (!in_array($method, $allowed, true)) {
     http_response_code(405);
@@ -121,6 +126,20 @@ try {
     }
     session_name('FOURTECH_ADMIN_TEST');
     session_start(['cookie_httponly' => true, 'cookie_samesite' => 'Strict', 'use_strict_mode' => true]);
+    $rbacController = new \App\Controllers\Admin\RbacAdminController(new \App\Repositories\Admin\RbacAdminRepository($db), $root);
+    if ($path === '/admin/login') { $rbacController->login($method); return; }
+    if ($path === '/admin/logout') { $rbacController->logout(); return; }
+    $actor = $rbacController->current();
+    if ($actor === null) { header('Location: /admin/login', true, 303); return; }
+    $required = \App\Services\Admin\RbacAdminService::routePermission($path, $method);
+    if ($required === null || !\App\Services\Admin\RbacAdminService::allowed($actor, $required)) { $rbacController->deny($actor); return; }
+    $nav = [];
+    foreach ([\App\Services\Admin\RbacAdminService::READ, \App\Services\Admin\RbacAdminService::USERS, \App\Services\Admin\RbacAdminService::RBAC] as $permission) {
+        $nav[$permission] = \App\Services\Admin\RbacAdminService::allowed($actor, $permission);
+    }
+    $_SESSION['task17_nav'] = $nav;
+    $_SESSION['task17_csrf'] ??= bin2hex(random_bytes(32));
+    if ($rbacRoute) { $rbacController->dispatch($path, $method, $actor); return; }
     $brandModuleEnabled = true;
     $userModuleEnabled = true;
     if ($userOperation !== null) {
