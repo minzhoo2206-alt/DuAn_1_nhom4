@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Core\Database;
+use App\Repositories\Admin\CategoryAdminRepository;
+use App\Services\Admin\CategoryAdminService;
 use App\Repositories\Admin\ProductAdminRepository;
 use App\Services\Admin\ProductAdminService;
 use Dotenv\Dotenv;
@@ -22,6 +24,9 @@ if ($method === 'GET' && in_array($path, ['/', '/admin'], true)) {
     return;
 }
 // Task 12/13 routes: GET edit; POST update, hide, delete.
+$categoryRoute = false;
+$categoryId = 0;
+$categoryOperation = null;
 $productId = null;
 $operation = null;
 if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update|hide|delete)$~D', $path, $match)) {
@@ -32,13 +37,30 @@ if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update
         exit('Khong tim thay san pham');
     }
     $allowed = $operation === 'edit' ? ['GET'] : ['POST'];
+} elseif ($path === '/admin/categories') {
+    $categoryRoute = true;
+    $categoryOperation = $method === 'GET' ? 'list' : 'store';
+    $allowed = ['GET', 'POST'];
+} elseif ($path === '/admin/categories/create') {
+    $categoryRoute = true;
+    $categoryOperation = 'create';
+    $allowed = ['GET'];
+} elseif (is_string($path) && preg_match('~^/admin/categories/([1-9][0-9]*)/(edit|update|activate|deactivate|delete)$~D', $path, $match)) {
+    $categoryRoute = true;
+    $categoryId = filter_var($match[1], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+    if ($categoryId === false) {
+        http_response_code(404);
+        exit('Không tìm thấy danh mục.');
+    }
+    $categoryOperation = $match[2];
+    $allowed = $categoryOperation === 'edit' ? ['GET'] : ['POST'];
 } elseif ($path === '/admin/products') {
     $allowed = ['GET', 'POST'];
 } elseif ($path === '/admin/products/create') {
     $allowed = ['GET'];
 } else {
     http_response_code(404);
-    exit('Route not available in Task 14.5');
+    exit('Route not available in Task 14.6');
 }
 if (!in_array($method, $allowed, true)) {
     http_response_code(405);
@@ -65,6 +87,11 @@ try {
     }
     session_name('FOURTECH_ADMIN_TEST');
     session_start(['cookie_httponly' => true, 'cookie_samesite' => 'Strict', 'use_strict_mode' => true]);
+    if ($categoryRoute) {
+        $categoryService = new CategoryAdminService(new CategoryAdminRepository($db));
+        require $root . '/docs/admin-db-test-categories.php';
+        return;
+    }
     $service = new ProductAdminService(new ProductAdminRepository($db));
     $isPreview = true;
     $_SESSION['task145_secret'] ??= bin2hex(random_bytes(32));
@@ -198,6 +225,6 @@ try {
     require $root . '/resources/views/admin/products/database-test-create.php';
 } catch (Throwable $e) {
     http_response_code(500);
-    error_log('[TASK145] ' . get_class($e) . ' code: ' . $e->getCode());
-    echo 'Khong the chay Task 14.5. Kiem tra MySQL local, .env.admin-test va schema test.';
+    error_log('[TASK146] ' . get_class($e) . ' code: ' . $e->getCode());
+    echo 'Khong the chay Task 14.6. Kiem tra MySQL local, .env.admin-test va schema test.';
 }
