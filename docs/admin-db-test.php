@@ -21,13 +21,28 @@ if ($method === 'GET' && in_array($path, ['/', '/admin'], true)) {
     header('Location: /admin/products', true, 302);
     return;
 }
-if (!in_array($path, ['/admin/products', '/admin/products/create'], true)) {
+// Keep the Task 12 route convention: GET /{id}/edit, POST /{id}/update.
+$productId = null;
+$operation = null;
+if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update)$~D', $path, $match)) {
+    $productId = filter_var($match[1], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+    $operation = $match[2];
+    if ($productId === false) {
+        http_response_code(404);
+        exit('Khong tim thay san pham');
+    }
+    $allowed = $operation === 'edit' ? ['GET'] : ['POST'];
+} elseif ($path === '/admin/products') {
+    $allowed = ['GET', 'POST'];
+} elseif ($path === '/admin/products/create') {
+    $allowed = ['GET'];
+} else {
     http_response_code(404);
-    exit('Route not available in Task 14.3');
+    exit('Route not available in Task 14.4');
 }
-if ($method !== 'GET' && !($method === 'POST' && $path === '/admin/products')) {
+if (!in_array($method, $allowed, true)) {
     http_response_code(405);
-    header('Allow: ' . ($path === '/admin/products' ? 'GET, POST' : 'GET'));
+    header('Allow: ' . implode(', ', $allowed));
     exit('Method not allowed');
 }
 $root = dirname(__DIR__);
@@ -62,6 +77,56 @@ try {
         $success = $_SESSION['task143_success'] ?? '';
         unset($_SESSION['task143_success']);
         require $root . '/resources/views/admin/products/database-test-list.php';
+        return;
+    }
+    if ($productId !== null) {
+        // A token bound to this product and action cannot be reused for another ID.
+        $_SESSION['task144_secret'] ??= bin2hex(random_bytes(32));
+        $adminProductToken = hash_hmac('sha256', 'update:' . $productId, $_SESSION['task144_secret']);
+        if ($method === 'POST') {
+            $token = $_POST['admin_product_token'] ?? null;
+            if (!is_string($token) || !hash_equals($adminProductToken, $token)) {
+                http_response_code(403);
+                exit('CSRF token khong hop le');
+            }
+        }
+        $product = $service->find($productId);
+        if ($product === null) {
+            http_response_code(404);
+            exit('Khong tim thay san pham');
+        }
+        $old = $product;
+        $error = '';
+        if ($method === 'POST') {
+            $old = $_POST;
+            try {
+                // The service validates fields and excludes status from UPDATE.
+                $service->update($productId, $old);
+                unset($_SESSION['task144_secret']);
+                $_SESSION['task143_success'] = 'Cập nhật sản phẩm thành công! ID: ' . $productId;
+                header('Location: /admin/products', true, 303);
+                return;
+            } catch (OutOfBoundsException $e) {
+                http_response_code(404);
+                exit('Khong tim thay san pham');
+            } catch (InvalidArgumentException $e) {
+                http_response_code(422);
+                $error = $e->getMessage();
+            } catch (PDOException $e) {
+                if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
+                    http_response_code(409);
+                    $error = 'Slug đã tồn tại ở sản phẩm khác.';
+                } else {
+                    http_response_code(500);
+                    $error = 'Không cập nhật được sản phẩm. Kiểm tra database test.';
+                }
+                error_log('[TASK144 UPDATE] SQLSTATE: ' . $e->getCode());
+            }
+        }
+        $options = $service->formOptions();
+        $brands = $options['brands'];
+        $categories = $options['categories'];
+        require $root . '/resources/views/admin/products/database-test-edit.php';
         return;
     }
     $old = [];
@@ -101,6 +166,6 @@ try {
     require $root . '/resources/views/admin/products/database-test-create.php';
 } catch (Throwable $e) {
     http_response_code(500);
-    error_log('[TASK143] ' . get_class($e) . ' code: ' . $e->getCode());
-    echo 'Khong the chay Task 14.3. Kiem tra MySQL local, .env.admin-test va schema test.';
+    error_log('[TASK144] ' . get_class($e) . ' code: ' . $e->getCode());
+    echo 'Khong the chay Task 14.4. Kiem tra MySQL local, .env.admin-test va schema test.';
 }
