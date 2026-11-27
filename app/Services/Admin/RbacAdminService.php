@@ -11,10 +11,11 @@ final class RbacAdminService
     public const WRITE='task17.catalog.write';
     public const USERS='task17.users.manage';
     public const RBAC='task17.rbac.manage';
+    public const ORDERS='task18.orders.manage';
     public static function allowed(?array $actor, string $permission): bool
     {
         if (!$actor || ($actor['status']??'')!=='active') return false;
-        $ceiling=match($actor['role']??'') { self::ADMIN=>[self::READ,self::WRITE,self::USERS,self::RBAC], self::STAFF=>[self::READ,self::WRITE], default=>[] };
+        $ceiling=match($actor['role']??'') { self::ADMIN=>[self::READ,self::WRITE,self::USERS,self::RBAC,self::ORDERS], self::STAFF=>[self::READ,self::WRITE], default=>[] };
         return in_array($permission,$ceiling,true) && in_array($permission,$actor['permissions']??[],true);
     }
     public static function routePermission(string $path,string $method): ?string
@@ -22,6 +23,7 @@ final class RbacAdminService
         if (preg_match('~^/admin/(products|categories|brands)(?:/|$)~D',$path)) {
             return $method==='GET' && !preg_match('~/(create|edit)$~D',$path) ? self::READ : self::WRITE;
         }
+        if (preg_match('~^/admin/orders(?:/|$)~D',$path)) return self::ORDERS;
         if (preg_match('~^/admin/users(?:/|$)~D',$path)) return self::USERS;
         if (preg_match('~^/admin/rbac(?:/|$)~D',$path)) return self::RBAC;
         return null;

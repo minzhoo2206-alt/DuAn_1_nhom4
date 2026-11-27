@@ -34,7 +34,10 @@ $rbacNav = $isPreview ? ($_SESSION['task17_nav'] ?? null) : null;
                     <span class="block rounded-lg p-3 text-slate-400" aria-disabled="true">Tài khoản</span>
                 <?php endif; ?>
                 <?php if (!empty($rbacNav['task17.rbac.manage'])): ?><a href="/admin/rbac" class="block rounded-lg p-3 <?= $pageTitle==='Phân quyền RBAC'?'bg-blue-600 text-white':'text-slate-300 hover:bg-slate-800' ?>">Phân quyền</a><?php endif; ?>
-                <?php foreach (!empty($rbacNav['task17.rbac.manage']) ? ['Đơn hàng'] : ['Đơn hàng','Phân quyền'] as $menu): ?>
+                <?php if (!empty($rbacNav['task18.orders.manage'])): ?>
+                    <a href="/admin/orders" class="block rounded-lg p-3 <?= in_array($pageTitle,['Quản lý đơn hàng','Chi tiết đơn hàng'],true)?'bg-blue-600 text-white':'text-slate-300 hover:bg-slate-800' ?>">Đơn hàng</a>
+                <?php else: ?><span class="block rounded-lg p-3 text-slate-400" aria-disabled="true">Đơn hàng</span><?php endif; ?>
+                <?php foreach (!empty($rbacNav['task17.rbac.manage']) ? [] : ['Phân quyền'] as $menu): ?>
                     <span class="block rounded-lg p-3 text-slate-400" aria-disabled="true"><?= htmlspecialchars($menu, ENT_QUOTES, 'UTF-8') ?></span>
                 <?php endforeach; ?>
             </nav>

@@ -9,7 +9,7 @@ declare(strict_types=1);
 use App\Services\Admin\RbacAdminService as Rules;
 $pageTitle='Phân quyền RBAC';$e=static fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
 $roles=[Rules::ADMIN=>'Admin',Rules::STAFF=>'Nhân viên',Rules::CUSTOMER=>'Khách hàng'];
-$permissions=[Rules::READ=>'Xem danh mục hàng hóa',Rules::WRITE=>'Thêm, sửa, ẩn, xóa mềm hàng hóa',Rules::USERS=>'Quản lý tài khoản',Rules::RBAC=>'Quản lý phân quyền'];
+$permissions=[Rules::READ=>'Xem danh mục hàng hóa',Rules::WRITE=>'Thêm, sửa, ẩn, xóa mềm hàng hóa',Rules::USERS=>'Quản lý tài khoản',Rules::RBAC=>'Quản lý phân quyền',Rules::ORDERS=>'Quản lý đơn hàng mẫu'];
 $grants=[];foreach($matrix as $item)$grants[$item['role_code']][$item['permission_code']]=true;
 ob_start(); ?>
 <h1 class="text-2xl font-bold">Phân quyền RBAC</h1><p class="my-3 bg-blue-50 text-blue-800 rounded p-3">Local only · Admin bảo vệ cố định; chỉ chuyển vai trò nhân viên ↔ khách hàng kiểm thử.</p>

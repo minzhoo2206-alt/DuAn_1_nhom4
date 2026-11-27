@@ -27,6 +27,7 @@ if ($method === 'GET' && in_array($path, ['/', '/admin'], true)) {
 }
 // Task 17: local login and server-side RBAC.
 $rbacRoute = false;
+$orderOperation = null; $orderId = 0;
 // Task 12/13 routes: GET edit; POST update, hide, delete.
 $userOperation = null;
 $userId = 0;
@@ -41,6 +42,13 @@ $operation = null;
 if (in_array($path, ['/admin/login','/admin/logout','/admin/rbac','/admin/rbac/role','/admin/rbac/staff-write'], true)) {
     $rbacRoute = true;
     $allowed = match ($path) { '/admin/login' => ['GET','POST'], '/admin/rbac' => ['GET'], default => ['POST'] };
+} elseif ($path === '/admin/orders') {
+    $orderOperation = 'list'; $allowed = ['GET'];
+} elseif (is_string($path) && preg_match('~^/admin/orders/([1-9][0-9]*)(/update)?$~D', $path, $match)) {
+    $orderId = filter_var($match[1], FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+    if ($orderId === false) { http_response_code(404); exit('Không tìm thấy đơn.'); }
+    $orderOperation = isset($match[2]) ? 'update' : 'detail';
+    $allowed = $orderOperation === 'update' ? ['POST'] : ['GET'];
 } elseif (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update|hide|delete)$~D', $path, $match)) {
     $productId = filter_var($match[1], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
     $operation = $match[2];
@@ -134,7 +142,7 @@ try {
     $required = \App\Services\Admin\RbacAdminService::routePermission($path, $method);
     if ($required === null || !\App\Services\Admin\RbacAdminService::allowed($actor, $required)) { $rbacController->deny($actor); return; }
     $nav = [];
-    foreach ([\App\Services\Admin\RbacAdminService::READ, \App\Services\Admin\RbacAdminService::USERS, \App\Services\Admin\RbacAdminService::RBAC] as $permission) {
+    foreach ([\App\Services\Admin\RbacAdminService::READ, \App\Services\Admin\RbacAdminService::USERS, \App\Services\Admin\RbacAdminService::RBAC, \App\Services\Admin\RbacAdminService::ORDERS] as $permission) {
         $nav[$permission] = \App\Services\Admin\RbacAdminService::allowed($actor, $permission);
     }
     $_SESSION['task17_nav'] = $nav;
@@ -142,6 +150,10 @@ try {
     if ($rbacRoute) { $rbacController->dispatch($path, $method, $actor); return; }
     $brandModuleEnabled = true;
     $userModuleEnabled = true;
+    if ($orderOperation !== null) {
+        (new \App\Controllers\Admin\OrderAdminController(new \App\Repositories\Admin\OrderAdminRepository($db), $root))->dispatch($orderOperation, $orderId, $actor);
+        return;
+    }
     if ($userOperation !== null) {
         $userService = new \App\Services\Admin\UserAdminService(new \App\Repositories\Admin\UserAdminRepository($db));
         $userController = new \App\Controllers\Admin\UserAdminController($userService, $root);
