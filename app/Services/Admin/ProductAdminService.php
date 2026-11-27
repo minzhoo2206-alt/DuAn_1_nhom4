@@ -180,7 +180,7 @@ final class ProductAdminService
         if ($product === null) throw new \OutOfBoundsException('Không tìm thấy sản phẩm.');
         self::validateLifecycleAction('activate', $product);
         if (!$this->products->activate($id)) {
-            throw new InvalidArgumentException('Không thể kích hoạt. Kiểm tra thương hiệu, danh mục hoặc tải lại trang.');
+            throw new InvalidArgumentException('Không thể kích hoạt. Kiểm tra thương hiệu, danh mục, giá bán và ít nhất một biến thể hoạt động.');
         }
     }
 

@@ -150,7 +150,7 @@ final class ProductAdminRepository
     }
 
 
-    // Local catalog activation only: not a guarantee of sellable stock or price.
+    // Local catalog activation: require price and active variant; not a stock guarantee.
     public function activate(int $id): bool
     {
         $stmt = $this->db->prepare("UPDATE products AS p
@@ -160,7 +160,12 @@ final class ProductAdminRepository
             WHERE p.id = :id AND p.deleted_at IS NULL
             AND p.status IN ('draft', 'hidden')
             AND b.is_active = 1 AND b.deleted_at IS NULL
-            AND c.is_active = 1 AND c.deleted_at IS NULL");
+            AND c.is_active = 1 AND c.deleted_at IS NULL
+            AND EXISTS (SELECT 1 FROM product_configurations f
+                JOIN product_variants v ON v.configuration_id=f.id
+                JOIN colors k ON k.id=v.color_id
+                WHERE f.product_id=p.id AND f.deleted_at IS NULL AND f.is_active=1 AND f.list_price>0
+                AND v.deleted_at IS NULL AND v.is_active=1 AND k.deleted_at IS NULL AND k.is_active=1)");
         $stmt->execute(['id' => $id]);
         return $stmt->rowCount() === 1;
     }

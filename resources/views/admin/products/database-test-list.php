@@ -25,7 +25,7 @@ ob_start();
 <section>
     <h1 class="mb-1 text-2xl font-bold">Quản lý sản phẩm</h1>
     <p class="mb-4 text-slate-500">Tìm thấy <?= (int) $total ?> sản phẩm (chưa bị xóa mềm)</p>
-    <p class="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">MySQL local · fourtech_admin_test. Trạng thái active chỉ dùng kiểm thử catalog; chưa xác nhận giá, IMEI và tồn kho thực tế.</p>
+    <p class="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">MySQL local · fourtech_admin_test. Kích hoạt mới cần cấu hình giá và biến thể. Trạng thái active cũ không được tự động sửa; chưa xác nhận IMEI và tồn kho thực tế.</p>
     <?php if (!empty($success)): ?><p role="status" class="mb-4 rounded-lg bg-green-100 p-3 text-green-800"><?= $e($success) ?></p><?php endif; ?>
     <form method="get" action="/admin/products" class="mb-4 grid gap-3 rounded-xl border bg-white p-4 md:grid-cols-2 xl:grid-cols-4">
         <label class="text-sm font-medium">Tìm sản phẩm<input name="q" maxlength="200" value="<?= $e($filters['q']) ?>" placeholder="Tên hoặc slug" class="mt-1 w-full rounded-lg border p-2"></label>
@@ -58,6 +58,7 @@ ob_start();
                         <td class="p-4"><?= $e($product['category_name'] ?? '') ?></td>
                         <td class="p-4"><span class="rounded-full px-3 py-1 <?= $statusColors[$status] ?? 'bg-slate-100' ?>"><?= $e($statusLabels[$status] ?? 'Không xác định') ?></span></td>
                         <td class="p-4">
+                            <a class="inline-block rounded-lg border px-3 py-2 mb-1 text-blue-700" href="/admin/products/<?= (int) $product['id'] ?>/catalog">Giá / Biến thể / Ảnh</a>
                             <?php if ($canWrite): ?>
                             <div class="flex flex-wrap items-center gap-2">
                                 <a class="inline-block rounded-lg border border-blue-600 px-3 py-2 font-medium text-blue-700 hover:bg-blue-50" href="/admin/products/<?= (int) $product['id'] ?>/edit">Sửa</a>

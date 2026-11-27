@@ -37,6 +37,7 @@ $brandOperation = null;
 $categoryRoute = false;
 $categoryId = 0;
 $categoryOperation = null;
+$catalogProductId = null; $catalogImageId = null;
 $productId = null;
 $operation = null;
 if (in_array($path, ['/admin', '/admin/dashboard'], true)) {
@@ -51,6 +52,11 @@ if (in_array($path, ['/admin', '/admin/dashboard'], true)) {
     if ($orderId === false) { http_response_code(404); exit('Không tìm thấy đơn.'); }
     $orderOperation = isset($match[2]) ? 'update' : 'detail';
     $allowed = $orderOperation === 'update' ? ['POST'] : ['GET'];
+} elseif (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/catalog(?:/image/([1-9][0-9]*))?$~D', $path, $match)) {
+    $catalogProductId = filter_var($match[1], FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+    $catalogImageId = isset($match[2]) ? filter_var($match[2], FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]) : null;
+    if ($catalogProductId === false || $catalogImageId === false) { http_response_code(404); return; }
+    $allowed = $catalogImageId === null ? ['GET','POST'] : ['GET'];
 } elseif (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update|activate|hide|delete)$~D', $path, $match)) {
     $productId = filter_var($match[1], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
     $operation = $match[2];
@@ -176,6 +182,12 @@ try {
     if ($categoryRoute) {
         $categoryService = new CategoryAdminService(new CategoryAdminRepository($db));
         require $root . '/docs/admin-db-test-categories.php';
+        return;
+    }
+    if ($catalogProductId !== null) {
+        $repo = new \App\Repositories\Admin\CatalogDetailAdminRepository($db);
+        $catalog = new \App\Services\Admin\CatalogDetailAdminService($repo, $root . '/storage/admin-task22-images');
+        (new \App\Controllers\Admin\CatalogDetailAdminController($repo, $catalog, $root))->dispatch($catalogProductId, $method, $actor, $catalogImageId);
         return;
     }
     $service = new ProductAdminService(new ProductAdminRepository($db));
