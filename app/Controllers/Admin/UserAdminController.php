@@ -13,7 +13,18 @@ final class UserAdminController
     public function __construct(private UserAdminService $service,private string $root) {}
     public function dispatch(string $operation,int $id,string $method): void
     {
-        if(PHP_SAPI!=='cli-server'||($_SERVER['HTTP_HOST']??'')!=='127.0.0.1:8001'||!in_array($_SERVER['REMOTE_ADDR']??'',['127.0.0.1','::1'],true)||session_status()!==PHP_SESSION_ACTIVE){http_response_code(403);return;}
+        // Keep standalone and Core-integrated local sessions isolated.
+        $coreLocal = defined('FOURTECH_ADMIN_CORE_LOCAL') && FOURTECH_ADMIN_CORE_LOCAL === true;
+        $expectedHost = $coreLocal ? '127.0.0.1:8002' : '127.0.0.1:8001';
+        $expectedSession = $coreLocal ? 'FOURTECH_ADMIN_INTEGRATION' : 'FOURTECH_ADMIN_TEST';
+        if (PHP_SAPI !== 'cli-server'
+            || ($_SERVER['HTTP_HOST'] ?? '') !== $expectedHost
+            || !in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)
+            || session_status() !== PHP_SESSION_ACTIVE
+            || session_name() !== $expectedSession) {
+            http_response_code(403);
+            return;
+        }
         $allowed=match($operation){'list','create','edit','password'=>'GET','store','update','reset','lock','unlock'=>'POST',default=>''};
         if($method!==$allowed){http_response_code(405);return;}
         $token=$_SESSION['task16_csrf']??=bin2hex(random_bytes(32));

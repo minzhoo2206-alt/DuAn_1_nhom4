@@ -12,9 +12,11 @@ use App\Services\Admin\ProductAdminService;
 use Dotenv\Dotenv;
 
 // Development only: not a production router or a substitute for RBAC.
+$coreLocal = defined('FOURTECH_ADMIN_CORE_LOCAL') && FOURTECH_ADMIN_CORE_LOCAL === true;
+$expectedHost = $coreLocal ? '127.0.0.1:8002' : '127.0.0.1:8001';
 if (PHP_SAPI !== 'cli-server'
     || !in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)
-    || ($_SERVER['HTTP_HOST'] ?? '') !== '127.0.0.1:8001') {
+    || ($_SERVER['HTTP_HOST'] ?? '') !== $expectedHost) {
     http_response_code(403);
     exit('Local test only');
 }
@@ -124,12 +126,18 @@ if (!in_array($method, $allowed, true)) {
 }
 $root = dirname(__DIR__);
 try {
-    require $root . '/vendor/autoload.php';
-    // Never load the hosting .env here. Check effective config before PDO.
-    $dotenv = Dotenv::createImmutable($root, '.env.admin-test');
-    $dotenv->load();
-    $dotenv->required(['DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_CHARSET'])->notEmpty();
-    $dotenv->required('DB_PASSWORD');
+    if (!$coreLocal) {
+        require $root . '/vendor/autoload.php';
+        // Standalone preview: never load the hosting .env.
+        $dotenv = Dotenv::createImmutable($root, '.env.admin-test');
+        $dotenv->load();
+        $dotenv->required(['DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_CHARSET'])->notEmpty();
+        $dotenv->required('DB_PASSWORD');
+    } elseif (session_status() !== PHP_SESSION_ACTIVE || session_name() !== 'FOURTECH_ADMIN_INTEGRATION') {
+        http_response_code(403);
+        exit('Blocked: start integration with its isolated session name');
+    }
+    // Core mode uses the .env already loaded by bootstrap/app.php.
     $config = require $root . '/config/database.php';
     if ($config['host'] !== '127.0.0.1' || $config['database'] !== 'fourtech_admin_test') {
         http_response_code(403);
@@ -140,8 +148,10 @@ try {
         http_response_code(403);
         exit('Blocked: wrong database');
     }
-    session_name('FOURTECH_ADMIN_TEST');
-    session_start(['cookie_httponly' => true, 'cookie_samesite' => 'Strict', 'use_strict_mode' => true]);
+    if (!$coreLocal) {
+        session_name('FOURTECH_ADMIN_TEST');
+        session_start(['cookie_httponly' => true, 'cookie_samesite' => 'Strict', 'use_strict_mode' => true]);
+    }
     $rbacController = new \App\Controllers\Admin\RbacAdminController(new \App\Repositories\Admin\RbacAdminRepository($db), $root);
     if ($path === '/admin/login') { $rbacController->login($method); return; }
     if ($path === '/admin/logout') { $rbacController->logout(); return; }
