@@ -26,6 +26,8 @@ if ($method === 'GET' && in_array($path, ['/', '/admin'], true)) {
     return;
 }
 // Task 12/13 routes: GET edit; POST update, hide, delete.
+$userOperation = null;
+$userId = 0;
 $brandRoute = false;
 $brandId = 0;
 $brandOperation = null;
@@ -76,13 +78,23 @@ if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update
     }
     $brandOperation = $match[2];
     $allowed = $brandOperation === 'edit' ? ['GET'] : ['POST'];
+} elseif ($path === '/admin/users') {
+    $userOperation = $method === 'GET' ? 'list' : 'store';
+    $allowed = ['GET', 'POST'];
+} elseif ($path === '/admin/users/create') {
+    $userOperation = 'create'; $allowed = ['GET'];
+} elseif (is_string($path) && preg_match('~^/admin/users/([1-9][0-9]*)/(edit|update|password|reset|lock|unlock)$~D', $path, $match)) {
+    $userId = filter_var($match[1], FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+    if ($userId === false) { http_response_code(404); exit('Không tìm thấy tài khoản.'); }
+    $userOperation = $match[2];
+    $allowed = in_array($userOperation, ['edit','password'], true) ? ['GET'] : ['POST'];
 } elseif ($path === '/admin/products') {
     $allowed = ['GET', 'POST'];
 } elseif ($path === '/admin/products/create') {
     $allowed = ['GET'];
 } else {
     http_response_code(404);
-    exit('Route not available in Task 15');
+    exit('Route not available in Task 16');
 }
 if (!in_array($method, $allowed, true)) {
     http_response_code(405);
@@ -110,6 +122,13 @@ try {
     session_name('FOURTECH_ADMIN_TEST');
     session_start(['cookie_httponly' => true, 'cookie_samesite' => 'Strict', 'use_strict_mode' => true]);
     $brandModuleEnabled = true;
+    $userModuleEnabled = true;
+    if ($userOperation !== null) {
+        $userService = new \App\Services\Admin\UserAdminService(new \App\Repositories\Admin\UserAdminRepository($db));
+        $userController = new \App\Controllers\Admin\UserAdminController($userService, $root);
+        $userController->dispatch($userOperation, $userId, $method);
+        return;
+    }
     if ($brandRoute) {
         $brandService = new BrandAdminService(new BrandAdminRepository($db));
         require $root . '/docs/admin-db-test-brands.php';
@@ -253,6 +272,6 @@ try {
     require $root . '/resources/views/admin/products/database-test-create.php';
 } catch (Throwable $e) {
     http_response_code(500);
-    error_log('[TASK15] ' . get_class($e) . ' code: ' . $e->getCode());
-    echo 'Khong the chay Task 15. Kiem tra MySQL local, .env.admin-test va schema test.';
+    error_log('[ADMIN TEST] ' . get_class($e) . ' code: ' . $e->getCode());
+    echo 'Khong the chay Admin test. Kiem tra MySQL local, .env.admin-test va schema test.';
 }

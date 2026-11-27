@@ -26,7 +26,12 @@ $isPreview = $isPreview ?? false;
                 <?php else: ?>
                     <span class="block rounded-lg p-3 text-slate-400" aria-disabled="true">Thương hiệu</span>
                 <?php endif; ?>
-                <?php foreach (['Đơn hàng','Tài khoản','Phân quyền'] as $menu): ?>
+                <?php if (!empty($userModuleEnabled)): ?>
+                    <a href="/admin/users" class="block rounded-lg p-3 <?= in_array($pageTitle, ['Quản lý tài khoản','Thêm nhân viên','Chỉnh sửa tài khoản','Đặt lại mật khẩu'], true) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800' ?>">Tài khoản</a>
+                <?php else: ?>
+                    <span class="block rounded-lg p-3 text-slate-400" aria-disabled="true">Tài khoản</span>
+                <?php endif; ?>
+                <?php foreach (['Đơn hàng','Phân quyền'] as $menu): ?>
                     <span class="block rounded-lg p-3 text-slate-400" aria-disabled="true"><?= htmlspecialchars($menu, ENT_QUOTES, 'UTF-8') ?></span>
                 <?php endforeach; ?>
             </nav>
