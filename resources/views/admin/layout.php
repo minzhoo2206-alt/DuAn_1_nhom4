@@ -21,7 +21,12 @@ $isPreview = $isPreview ?? false;
                 <?php foreach ([['/admin','Tổng quan',['Tổng quan']], ['/admin/products','Sản phẩm',['Quản lý sản phẩm','Thêm sản phẩm','Chỉnh sửa sản phẩm']], ['/admin/categories','Danh mục',['Quản lý danh mục','Thêm danh mục','Chỉnh sửa danh mục']]] as [$url,$label,$titles]): ?>
                     <a href="<?= $url ?>" class="block rounded-lg p-3 <?= in_array($pageTitle, $titles, true) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800' ?>"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></a>
                 <?php endforeach; ?>
-                <?php foreach (['Thương hiệu','Đơn hàng','Tài khoản','Phân quyền'] as $menu): ?>
+                <?php if (!empty($brandModuleEnabled)): ?>
+                    <a href="/admin/brands" class="block rounded-lg p-3 <?= in_array($pageTitle, ['Quản lý thương hiệu','Thêm thương hiệu','Chỉnh sửa thương hiệu'], true) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800' ?>">Thương hiệu</a>
+                <?php else: ?>
+                    <span class="block rounded-lg p-3 text-slate-400" aria-disabled="true">Thương hiệu</span>
+                <?php endif; ?>
+                <?php foreach (['Đơn hàng','Tài khoản','Phân quyền'] as $menu): ?>
                     <span class="block rounded-lg p-3 text-slate-400" aria-disabled="true"><?= htmlspecialchars($menu, ENT_QUOTES, 'UTF-8') ?></span>
                 <?php endforeach; ?>
             </nav>
