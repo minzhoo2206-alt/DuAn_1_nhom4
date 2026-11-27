@@ -12,23 +12,50 @@ final class ProductAdminRepository
     {
     }
 
-    public function paginate(int $limit = 20, int $offset = 0): array
+    // The same predicate is used for COUNT and pagination. User values are bound.
+    public static function filterPredicate(array $filters): array
     {
+        $conditions = ['p.deleted_at IS NULL'];
+        $params = [];
+        if (($filters['q'] ?? '') !== '') {
+            $conditions[] = "(p.name LIKE :name_q ESCAPE '!' OR p.slug LIKE :slug_q ESCAPE '!')";
+            $term = '%' . strtr($filters['q'], ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
+            $params[':name_q'] = $term;
+            $params[':slug_q'] = $term;
+        }
+        foreach (['brand_id', 'category_id', 'status'] as $field) {
+            if (!empty($filters[$field])) {
+                $conditions[] = 'p.' . $field . ' = :' . $field;
+                $params[':' . $field] = $filters[$field];
+            }
+        }
+        return [implode(' AND ', $conditions), $params];
+    }
+
+    private function bindFilters(\PDOStatement $stmt, array $params): void
+    {
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+    }
+
+    public function paginate(int $limit = 20, int $offset = 0, array $filters = []): array
+    {
+        [$where, $params] = self::filterPredicate($filters);
         $sql = 'SELECT p.id, p.name, p.slug, p.status,
                        p.created_at, b.name AS brand_name,
                        c.name AS category_name
                 FROM products AS p
                 LEFT JOIN brands AS b ON b.id = p.brand_id
                 LEFT JOIN categories AS c ON c.id = p.category_id
-                WHERE p.deleted_at IS NULL
+                WHERE ' . $where . '
                 ORDER BY p.id DESC
                 LIMIT :limit OFFSET :offset';
-
         $stmt = $this->db->prepare($sql);
+        $this->bindFilters($stmt, $params);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -49,15 +76,21 @@ final class ProductAdminRepository
         return $product === false ? null : $product;
     }
 
-    public function count(): int
+    public function count(array $filters = []): int
     {
-        $sql = 'SELECT COUNT(*) FROM products
-                WHERE deleted_at IS NULL';
-
-        $stmt = $this->db->prepare($sql);
+        [$where, $params] = self::filterPredicate($filters);
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM products AS p WHERE ' . $where);
+        $this->bindFilters($stmt, $params);
         $stmt->execute();
-
         return (int) $stmt->fetchColumn();
+    }
+
+    public function filterOptions(): array
+    {
+        return [
+            'brands' => $this->db->query('SELECT id, name FROM brands WHERE deleted_at IS NULL ORDER BY name')->fetchAll(PDO::FETCH_ASSOC),
+            'categories' => $this->db->query('SELECT id, name FROM categories WHERE deleted_at IS NULL ORDER BY name')->fetchAll(PDO::FETCH_ASSOC),
+        ];
     }
 
     // Danh sách thương hiệu và danh mục đang hoạt động.
@@ -116,6 +149,21 @@ final class ProductAdminRepository
         }
     }
 
+
+    // Local catalog activation only: not a guarantee of sellable stock or price.
+    public function activate(int $id): bool
+    {
+        $stmt = $this->db->prepare("UPDATE products AS p
+            INNER JOIN brands AS b ON b.id = p.brand_id
+            INNER JOIN categories AS c ON c.id = p.category_id
+            SET p.status = 'active', p.updated_at = NOW(6)
+            WHERE p.id = :id AND p.deleted_at IS NULL
+            AND p.status IN ('draft', 'hidden')
+            AND b.is_active = 1 AND b.deleted_at IS NULL
+            AND c.is_active = 1 AND c.deleted_at IS NULL");
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() === 1;
+    }
 
     // Chỉ ẩn sản phẩm đang bán, không thay đổi tồn kho.
     public function hide(int $id): bool

@@ -14,24 +14,54 @@ final class ProductAdminService
     }
 
     // Lấy danh sách sản phẩm và thông tin phân trang
-    public function listing(int $page = 1, int $perPage = 20): array
+    public function listing(int $page = 1, int $perPage = 20, array $input = []): array
     {
         $page = max(1, $page);
         $perPage = min(100, max(1, $perPage));
 
-        $total = $this->products->count();
+        $filters = self::normalizeFilters($input);
+        $total = $this->products->count($filters);
         $totalPages = max(1, (int) ceil($total / $perPage));
 
         $page = min($page, $totalPages);
         $offset = ($page - 1) * $perPage;
 
         return [
-            'products' => $this->products->paginate($perPage, $offset),
+            'products' => $this->products->paginate($perPage, $offset, $filters),
+            'filters' => $filters,
             'page' => $page,
             'perPage' => $perPage,
             'total' => $total,
             'totalPages' => $totalPages,
         ];
+    }
+
+    public static function normalizeFilters(array $input): array
+    {
+        $q = is_string($input['q'] ?? null) ? trim($input['q']) : '';
+        // Reject malformed/oversized query rather than splitting UTF-8 bytes.
+        if (strlen($q) > 800 || !preg_match('/^.{0,200}$/usD', $q)) {
+            throw new InvalidArgumentException('Từ khóa phải tối đa 200 ký tự hợp lệ.');
+        }
+        $filters = ['q' => $q];
+        foreach (['brand_id', 'category_id'] as $key) {
+            $raw = $input[$key] ?? '';
+            if ($raw === '') { $filters[$key] = 0; continue; }
+            $id = (is_string($raw) || is_int($raw)) ? filter_var($raw, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) : false;
+            if ($id === false) throw new InvalidArgumentException('Bộ lọc ID không hợp lệ.');
+            $filters[$key] = $id;
+        }
+        $status = $input['status'] ?? '';
+        if (!is_string($status) || !in_array($status, ['', 'draft', 'active', 'hidden'], true)) {
+            throw new InvalidArgumentException('Trạng thái lọc không hợp lệ.');
+        }
+        $filters['status'] = $status;
+        return $filters;
+    }
+
+    public function filterOptions(): array
+    {
+        return $this->products->filterOptions();
     }
 
     // Tìm sản phẩm có ID hợp lệ
@@ -132,13 +162,26 @@ final class ProductAdminService
             throw new \OutOfBoundsException('Không tìm thấy sản phẩm.');
         }
         $status = $product['status'] ?? '';
+        if ($action === 'activate' && in_array($status, ['draft', 'hidden'], true)) {
+            return;
+        }
         if ($action === 'hide' && $status === 'active') {
             return;
         }
         if ($action === 'delete' && in_array($status, ['draft', 'hidden'], true)) {
             return;
         }
-        throw new InvalidArgumentException('Thao tác không hợp lệ. Hãy ẩn sản phẩm đang bán trước khi xóa.');
+        throw new InvalidArgumentException('Thao tác không hợp lệ với trạng thái hiện tại.');
+    }
+
+    public function activate(int $id): void
+    {
+        $product = $this->find($id);
+        if ($product === null) throw new \OutOfBoundsException('Không tìm thấy sản phẩm.');
+        self::validateLifecycleAction('activate', $product);
+        if (!$this->products->activate($id)) {
+            throw new InvalidArgumentException('Không thể kích hoạt. Kiểm tra thương hiệu, danh mục hoặc tải lại trang.');
+        }
     }
 
     public function hide(int $id): void

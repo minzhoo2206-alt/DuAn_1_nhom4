@@ -51,7 +51,7 @@ if (in_array($path, ['/admin', '/admin/dashboard'], true)) {
     if ($orderId === false) { http_response_code(404); exit('Không tìm thấy đơn.'); }
     $orderOperation = isset($match[2]) ? 'update' : 'detail';
     $allowed = $orderOperation === 'update' ? ['POST'] : ['GET'];
-} elseif (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update|hide|delete)$~D', $path, $match)) {
+} elseif (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update|activate|hide|delete)$~D', $path, $match)) {
     $productId = filter_var($match[1], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
     $operation = $match[2];
     if ($productId === false) {
@@ -184,7 +184,15 @@ try {
     $actionSecret = $_SESSION['task145_secret'];
     if ($method === 'GET' && $path === '/admin/products') {
         $requestedPage = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT);
-        $data = $service->listing($requestedPage === false ? 1 : $requestedPage, 10);
+        try {
+            $data = $service->listing($requestedPage === false ? 1 : $requestedPage, 10, $_GET);
+        } catch (InvalidArgumentException $e) {
+            http_response_code(422);
+            exit(htmlspecialchars($e->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
+        }
+        $filters = $data['filters'];
+        $filterOptions = $service->filterOptions();
+        $canWrite = \App\Services\Admin\RbacAdminService::allowed($actor, \App\Services\Admin\RbacAdminService::WRITE);
         $products = $data['products'];
         $page = $data['page'];
         $total = $data['total'];
@@ -194,7 +202,7 @@ try {
         require $root . '/resources/views/admin/products/database-test-list.php';
         return;
     }
-    if ($productId !== null && in_array($operation, ['hide', 'delete'], true)) {
+    if ($productId !== null && in_array($operation, ['activate', 'hide', 'delete'], true)) {
         $expected = hash_hmac('sha256', $operation . ':' . $productId, $actionSecret);
         $token = $_POST['admin_product_action_token'] ?? null;
         if (!is_string($token) || !hash_equals($expected, $token)) {
@@ -202,7 +210,10 @@ try {
             exit('CSRF token khong hop le');
         }
         try {
-            if ($operation === 'hide') {
+            if ($operation === 'activate') {
+                $service->activate($productId);
+                $_SESSION['task143_success'] = 'Kích hoạt sản phẩm thành công! ID: ' . $productId;
+            } elseif ($operation === 'hide') {
                 $service->hide($productId);
                 $_SESSION['task143_success'] = 'Ẩn sản phẩm thành công! ID: ' . $productId;
             } else {
@@ -210,7 +221,11 @@ try {
                 $_SESSION['task143_success'] = 'Xóa mềm sản phẩm thành công! ID: ' . $productId;
             }
             unset($_SESSION['task145_secret']);
-            header('Location: /admin/products', true, 303);
+            $back = '/admin/products';
+            try {
+                $back .= '?' . http_build_query(ProductAdminService::normalizeFilters($_POST) + ['page' => max(1, (int) filter_var($_POST['page'] ?? 1, FILTER_VALIDATE_INT))]);
+            } catch (InvalidArgumentException) { /* Invalid return filters do not undo a valid update. */ }
+            header('Location: ' . $back, true, 303);
             return;
         } catch (OutOfBoundsException $e) {
             http_response_code(404);
