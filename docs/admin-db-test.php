@@ -21,10 +21,10 @@ if ($method === 'GET' && in_array($path, ['/', '/admin'], true)) {
     header('Location: /admin/products', true, 302);
     return;
 }
-// Keep the Task 12 route convention: GET /{id}/edit, POST /{id}/update.
+// Task 12/13 routes: GET edit; POST update, hide, delete.
 $productId = null;
 $operation = null;
-if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update)$~D', $path, $match)) {
+if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update|hide|delete)$~D', $path, $match)) {
     $productId = filter_var($match[1], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
     $operation = $match[2];
     if ($productId === false) {
@@ -38,7 +38,7 @@ if (is_string($path) && preg_match('~^/admin/products/([1-9][0-9]*)/(edit|update
     $allowed = ['GET'];
 } else {
     http_response_code(404);
-    exit('Route not available in Task 14.4');
+    exit('Route not available in Task 14.5');
 }
 if (!in_array($method, $allowed, true)) {
     http_response_code(405);
@@ -67,6 +67,8 @@ try {
     session_start(['cookie_httponly' => true, 'cookie_samesite' => 'Strict', 'use_strict_mode' => true]);
     $service = new ProductAdminService(new ProductAdminRepository($db));
     $isPreview = true;
+    $_SESSION['task145_secret'] ??= bin2hex(random_bytes(32));
+    $actionSecret = $_SESSION['task145_secret'];
     if ($method === 'GET' && $path === '/admin/products') {
         $requestedPage = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT);
         $data = $service->listing($requestedPage === false ? 1 : $requestedPage, 10);
@@ -78,6 +80,36 @@ try {
         unset($_SESSION['task143_success']);
         require $root . '/resources/views/admin/products/database-test-list.php';
         return;
+    }
+    if ($productId !== null && in_array($operation, ['hide', 'delete'], true)) {
+        $expected = hash_hmac('sha256', $operation . ':' . $productId, $actionSecret);
+        $token = $_POST['admin_product_action_token'] ?? null;
+        if (!is_string($token) || !hash_equals($expected, $token)) {
+            http_response_code(403);
+            exit('CSRF token khong hop le');
+        }
+        try {
+            if ($operation === 'hide') {
+                $service->hide($productId);
+                $_SESSION['task143_success'] = 'Ẩn sản phẩm thành công! ID: ' . $productId;
+            } else {
+                $service->softDelete($productId);
+                $_SESSION['task143_success'] = 'Xóa mềm sản phẩm thành công! ID: ' . $productId;
+            }
+            unset($_SESSION['task145_secret']);
+            header('Location: /admin/products', true, 303);
+            return;
+        } catch (OutOfBoundsException $e) {
+            http_response_code(404);
+            exit('Không tìm thấy sản phẩm.');
+        } catch (InvalidArgumentException $e) {
+            http_response_code(409);
+            exit(htmlspecialchars($e->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
+        } catch (PDOException $e) {
+            error_log('[TASK145 ACTION] SQLSTATE: ' . $e->getCode());
+            http_response_code(500);
+            exit('Không thực hiện được thao tác. Kiểm tra database test.');
+        }
     }
     if ($productId !== null) {
         // A token bound to this product and action cannot be reused for another ID.
@@ -166,6 +198,6 @@ try {
     require $root . '/resources/views/admin/products/database-test-create.php';
 } catch (Throwable $e) {
     http_response_code(500);
-    error_log('[TASK144] ' . get_class($e) . ' code: ' . $e->getCode());
-    echo 'Khong the chay Task 14.4. Kiem tra MySQL local, .env.admin-test va schema test.';
+    error_log('[TASK145] ' . get_class($e) . ' code: ' . $e->getCode());
+    echo 'Khong the chay Task 14.5. Kiem tra MySQL local, .env.admin-test va schema test.';
 }
