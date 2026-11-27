@@ -20,6 +20,7 @@ final class RbacAdminService
     }
     public static function routePermission(string $path,string $method): ?string
     {
+        if (in_array($path, ['/admin', '/admin/dashboard'], true)) return $method === 'GET' ? self::READ : null;
         if (preg_match('~^/admin/(products|categories|brands)(?:/|$)~D',$path)) {
             return $method==='GET' && !preg_match('~/(create|edit)$~D',$path) ? self::READ : self::WRITE;
         }

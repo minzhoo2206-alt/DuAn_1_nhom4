@@ -21,8 +21,8 @@ if (PHP_SAPI !== 'cli-server'
 header('Cache-Control: no-store');
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'] ?? '';
-if ($method === 'GET' && in_array($path, ['/', '/admin'], true)) {
-    header('Location: /admin/products', true, 302);
+if ($method === 'GET' && $path === '/') {
+    header('Location: /admin', true, 302);
     return;
 }
 // Task 17: local login and server-side RBAC.
@@ -39,7 +39,9 @@ $categoryId = 0;
 $categoryOperation = null;
 $productId = null;
 $operation = null;
-if (in_array($path, ['/admin/login','/admin/logout','/admin/rbac','/admin/rbac/role','/admin/rbac/staff-write'], true)) {
+if (in_array($path, ['/admin', '/admin/dashboard'], true)) {
+    $allowed = ['GET'];
+} elseif (in_array($path, ['/admin/login','/admin/logout','/admin/rbac','/admin/rbac/role','/admin/rbac/staff-write'], true)) {
     $rbacRoute = true;
     $allowed = match ($path) { '/admin/login' => ['GET','POST'], '/admin/rbac' => ['GET'], default => ['POST'] };
 } elseif ($path === '/admin/orders') {
@@ -150,6 +152,12 @@ try {
     if ($rbacRoute) { $rbacController->dispatch($path, $method, $actor); return; }
     $brandModuleEnabled = true;
     $userModuleEnabled = true;
+    if (in_array($path, ['/admin', '/admin/dashboard'], true)) {
+        $dashboard = (new \App\Repositories\Admin\DashboardAdminRepository($db))->summary($actor);
+        $isPreview = true;
+        require $root . '/resources/views/admin/dashboard.php';
+        return;
+    }
     if ($orderOperation !== null) {
         (new \App\Controllers\Admin\OrderAdminController(new \App\Repositories\Admin\OrderAdminRepository($db), $root))->dispatch($orderOperation, $orderId, $actor);
         return;
