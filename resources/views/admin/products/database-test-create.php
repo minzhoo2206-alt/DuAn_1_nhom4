@@ -1,6 +1,8 @@
 <?php
-
 declare(strict_types=1);
+
+/** @var array $brands */
+/** @var array $categories */
 
 $pageTitle = 'Quản lý sản phẩm';
 $old = $old ?? [];
@@ -11,7 +13,8 @@ ob_start();
     <h1 class="mb-2 text-2xl font-bold">Thêm sản phẩm</h1>
     <p class="mb-5 text-slate-500">Sản phẩm mới được lưu dưới dạng bản nháp.</p>
     <?php if (!empty($isPreview)): ?>
-        <p class="mb-4 rounded-lg bg-blue-50 p-3 text-blue-700">MySQL local: lưu thật vào fourtech_admin_test, không ghi vào hosting.</p>
+        <p class="mb-4 rounded-lg bg-blue-50 p-3 text-blue-700">MySQL local: lưu thật vào fourtech_admin_test, không ghi vào
+            hosting.</p>
     <?php endif; ?>
     <?php if (!empty($error)): ?>
         <p role="alert" class="mb-4 rounded-lg bg-red-50 p-3 text-red-700"><?= $e($error) ?></p>
@@ -20,10 +23,12 @@ ob_start();
         <input type="hidden" name="admin_product_token" value="<?= $e($adminProductToken ?? '') ?>">
         <!-- Token CSRF local; middleware chung cần tích hợp sau. -->
         <label class="block">Tên sản phẩm
-            <input required name="name" maxlength="200" value="<?= $e($old['name'] ?? '') ?>" class="mt-1 w-full rounded-lg border p-3">
+            <input required name="name" maxlength="200" value="<?= $e($old['name'] ?? '') ?>"
+                class="mt-1 w-full rounded-lg border p-3">
         </label>
         <label class="block">Slug (tên đường dẫn)
-            <input required name="slug" maxlength="220" placeholder="iphone-16-pro-max" value="<?= $e($old['slug'] ?? '') ?>" class="mt-1 w-full rounded-lg border p-3">
+            <input required name="slug" maxlength="220" placeholder="iphone-16-pro-max"
+                value="<?= $e($old['slug'] ?? '') ?>" class="mt-1 w-full rounded-lg border p-3">
         </label>
         <div class="grid gap-4 sm:grid-cols-2">
             <label>Thương hiệu
@@ -44,13 +49,16 @@ ob_start();
             </label>
         </div>
         <label class="block">Thời hạn bảo hành (tháng)
-            <input required type="number" min="0" max="65535" name="warranty_months" value="<?= $e($old['warranty_months'] ?? '12') ?>" class="mt-1 w-full rounded-lg border p-3">
+            <input required type="number" min="0" max="65535" name="warranty_months"
+                value="<?= $e($old['warranty_months'] ?? '12') ?>" class="mt-1 w-full rounded-lg border p-3">
         </label>
         <label class="block">Mô tả
-            <textarea name="description" rows="4" class="mt-1 w-full rounded-lg border p-3"><?= $e($old['description'] ?? '') ?></textarea>
+            <textarea name="description" rows="4"
+                class="mt-1 w-full rounded-lg border p-3"><?= $e($old['description'] ?? '') ?></textarea>
         </label>
         <div class="flex flex-wrap gap-3">
-            <button type="submit" class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white">Lưu sản phẩm</button>
+            <button type="submit" class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white">Lưu sản
+                phẩm</button>
             <a href="/admin/products" class="rounded-lg border px-5 py-3">Hủy</a>
         </div>
     </form>

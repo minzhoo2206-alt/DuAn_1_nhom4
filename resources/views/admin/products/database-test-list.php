@@ -1,6 +1,11 @@
 <?php
-
 declare(strict_types=1);
+
+/** @var array $products */
+/** @var int $total */
+/** @var int $totalPages */
+/** @var int $page */
+
 $pageTitle = 'Quản lý sản phẩm';
 $e = static fn($value): string => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $statusLabels = ['draft' => 'Bản nháp', 'active' => 'Đang bán', 'hidden' => 'Đang ẩn'];

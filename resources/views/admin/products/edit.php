@@ -1,6 +1,10 @@
 <?php
-
 declare(strict_types=1);
+
+/** @var array $brands */
+/** @var array $categories */
+
+
 
 $pageTitle = 'Quản lý sản phẩm';
 $old = $old ?? [];
